@@ -1,0 +1,32 @@
+# Django & Database
+Django
+psycopg2-binary   # PostgreSQL support
+
+
+# LangChain & RAG components
+langchain
+langchain-community
+langchain-core
+
+# Vector DB (local only)
+chromadb
+
+
+# HuggingFace & Embeddings
+transformers
+sentence-transformers
+huggingface-hub
+
+# Document loaders & parsing
+pypdf
+python-docx
+unstructured
+
+
+
+# Utilities
+python-dotenv
+requests
+numpy
+pandas
+tqdm

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Healthcare Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'health-blue': '#3B82F6',
+                        'health-light-blue': '#E8F2FF',
+                        'health-dark': '#1A1A1A',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen">
+    
+  {% include 'includes/navbar.html' %}
+
+  {% block content %}
+  {% endblock %}
+
+  {% include 'includes/footer.html' %}
+</body>
+</html>

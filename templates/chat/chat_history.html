@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Chat History - Rural Health Assistant{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col px-2 sm:px-4 md:px-6 lg:px-28">
+  <!-- Header Section -->
+  <div class=" shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+      <div>
+        <p class="mt-1 text-sm text-gray-600">Review and manage your past conversations with your health assistant.</p>
+      </div>
+      <div>
+        <a
+          href="{% url 'chat:index' %}"
+          class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+        >
+          <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          Start New Chat
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class=" shadow-sm rounded-lg mx-4 sm:mx-6 lg:mx-8 p-5 mt-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Filter Conversations</h3>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+        <div class="mt-1">
+          <input
+            type="text"
+            name="search"
+            id="search"
+            value="{{ search_query }}"
+            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-lg py-2 px-3"
+            placeholder="Search questions or answers..."
+          />
+        </div>
+      </div>
+      <div>
+        <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+        <div class="mt-1">
+          <input
+            type="date"
+            name="date"
+            id="date"
+            value="{{ date_filter }}"
+            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-lg py-2 px-3"
+          />
+        </div>
+      </div>
+      <div class="flex items-end">
+        <button
+          type="button"
+          id="apply-filters"
+          class="w-full inline-flex justify-center py-2.5 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          Apply Filters
+        </button>
+      </div>
+      <div class="flex items-end">
+        <a
+          href="{% url 'chat:chat_history' %}"
+          class="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          Clear Filters
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat History List -->
+  <div class="flex-1 px-4 sm:px-6 lg:px-8 py-6">
+    {% if chats %}
+      <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+        <ul class="divide-y divide-gray-200">
+          {% for chat in chats %}
+          <li class="hover:bg-gray-50 transition-colors">
+            <div class="px-6 py-5">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                <p class="text-sm font-medium text-blue-600 truncate">
+                  {{ chat.get_question_preview }}
+                </p>
+                <div class="flex-shrink-0">
+                  <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    {{ chat.timestamp|date:"M d, Y" }}
+                  </span>
+                </div>
+              </div>
+              <div class="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm text-gray-500">
+                <div class="flex items-center">
+                  <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {{ chat.timestamp|date:"g:i A" }}
+                </div>
+                <div class="mt-2 sm:mt-0">
+                  <form action="{% url 'chat:delete_chat' chat.id %}" method="POST" class="inline">
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      class="text-red-600 hover:text-red-800 font-medium"
+                      onclick="return confirm('Are you sure you want to delete this chat?')"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <div class="mt-4">
+                <details class="group">
+                  <summary class="cursor-pointer flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                    <svg class="w-4 h-4 mr-2 group-open:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                    View Full Conversation
+                  </summary>
+                  <div class="mt-3 pl-6 border-l-2 border-gray-200 space-y-2">
+                    <div>
+                      <p class="font-medium text-gray-800">You asked:</p>
+                      <p class="mt-1 text-gray-700">{{ chat.question }}</p>
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-800">Assistant replied:</p>
+                      <p class="mt-1 text-gray-700 whitespace-pre-line">{{ chat.answer }}</p>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <!-- Footer Actions -->
+        <div class="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
+          <form action="{% url 'chat:clear_chat_history' %}" method="POST" class="inline">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+              onclick="return confirm('Are you sure? This will permanently delete all your chat history.')"
+            >
+              Clear All History
+            </button>
+          </form>
+          <div>
+            <a
+              href="{% url 'chat:export_chat_history' %}?{% if search_query %}search={{ search_query }}&{% endif %}{% if date_filter %}date={{ date_filter }}{% endif %}"
+              class="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center"
+            >
+              <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export as TXT
+            </a>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+      <!-- Empty State -->
+      <div class="bg-white rounded-lg shadow-sm p-10 text-center">
+        <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No conversations yet</h3>
+        <p class="mt-2 text-sm text-gray-500">Your chat history will appear here after you start chatting.</p>
+        <div class="mt-6">
+          <a
+            href="{% url 'chat:index' %}"
+            class="inline-flex items-center px-5 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+          >
+            Start Your First Chat
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const applyFiltersButton = document.getElementById("apply-filters");
+  const searchInput = document.getElementById("search");
+  const dateInput = document.getElementById("date");
+
+  applyFiltersButton.addEventListener("click", function () {
+    const search = searchInput.value.trim();
+    const date = dateInput.value;
+
+    let url = new URL("{% url 'chat:chat_history' %}", window.location.origin);
+
+    if (search) {
+      url.searchParams.set("search", search);
+    }
+
+    if (date) {
+      url.searchParams.set("date", date);
+    }
+
+    window.location.href = url.toString();
+  });
+});
+</script>
+{% endblock %}

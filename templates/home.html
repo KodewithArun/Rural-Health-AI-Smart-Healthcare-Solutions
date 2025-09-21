@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+ <!-- About Us Section -->
+ 
+
+
+
+<!-- Chat Interface -->
+<div class="container mx-auto px-4 py-8 max-w-7xl " id="chat">
+    <div class="grid lg:grid-cols-2 gap-8 items-center">
+
+        <!-- Left Section - Information -->
+        <div class="space-y-6">
+            <!-- Badge -->
+            <div
+                class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-200">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                AI-Powered Healthcare
+            </div>
+
+            <!-- Main Heading -->
+            <div class="space-y-4">
+                <h1 class="text-5xl font-bold text-black leading-tight">
+                    Chat To Access The Best
+                    <span class="text-blue-600">Rural Health Assistance</span>
+                </h1>
+
+                <p class="text-gray-600 text-lg leading-relaxed">
+                    Get instant medical guidance, symptom assessment, and healthcare recommendations through our
+                    advanced AI chatbot. Available 24/7 to support rural communities with professional healthcare
+                    insights.
+                </p>
+            </div>
+
+            <!-- Features List -->
+            <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mt-3 flex-shrink-0"></div>
+                    <span class="text-gray-700 text-lg">Instant symptom analysis and health guidance</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mt-3 flex-shrink-0"></div>
+                    <span class="text-gray-700 text-lg">24/7 availability for emergency consultations</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mt-3 flex-shrink-0"></div>
+                    <span class="text-gray-700 text-lg">Multilingual support for diverse communities</span>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="pt-4">
+                <a href="{% url 'chat:index' %}"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors duration-200 inline-flex items-center gap-2">
+                    Start Conversation
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Section - Chat Interface -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+
+            <!-- Chat Header -->
+            <div class="bg-gray-100 px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                            <i class="ri-message-2-line text-white"></i>
+
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span class="text-sm text-gray-600">Online</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="p-6 space-y-4 h-80 overflow-y-auto">
+
+                <!-- AI Message -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="ri-robot-2-line text-white"></i>
+                    </div>
+                    <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-xs">
+                        <p class="text-gray-800 text-sm">Hello! I'm your AI health assistant. How can I help you today?
+                        </p>
+                    </div>
+                </div>
+
+                <!-- User Message -->
+                <div class="flex gap-3 justify-end">
+                    <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-xs">
+                        <p class="text-sm">I've been having headaches for 3 days</p>
+                    </div>
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex-shrink-0 flex items-center justify-center">
+                        <i class="ri-user-2-line text-white"></i>
+                    </div>
+                </div>
+
+                <!-- AI Response -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="ri-robot-2-line text-white"></i>
+                    </div>
+                    <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-xs">
+                        <p class="text-gray-800 text-sm">Drink plenty of water and get enough rest. Try to relax in a
+                            quiet, dark room and avoid too much screen time.</p>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <!-- use remix icon for ai bot avatar -->
+                        <i class="ri-robot-2-line text-white"></i>
+                    </div>
+                    <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
+                        <div class="flex gap-1">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s">
+                            </div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+ <!-- Services Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 bg-health-light-blue text-health-blue px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <i class="ri-service-line"></i>
+                Our Healthcare Services
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-health-dark mb-6">
+                Comprehensive Rural 
+                <span class="text-health-blue">Health Solutions</span>
+            </h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Bridging the healthcare gap in rural communities with AI-powered medical assistance, 
+                expert consultations, and 24/7 support tailored for remote areas.
+            </p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- AI Health Assistant -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-health-blue/20 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-health-blue to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-robot-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">AI Health Assistant</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Get instant medical guidance through our advanced AI chatbot. Available 24/7 for symptom analysis, health recommendations, and preliminary assessments.
+                </p>
+            </div>
+
+            <!-- Telemedicine Consultations -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-health-blue/20 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-video-chat-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">Telemedicine Consultations</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Connect with certified healthcare professionals through secure video consultations. Perfect for follow-ups and non-emergency medical advice.
+                </p>
+            </div>
+
+            <!-- Emergency Response -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-red-200 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-alarm-warning-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">Emergency Response</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    24/7 emergency support with direct connection to local healthcare facilities and emergency services in your rural area.
+                </p>
+            </div>
+
+            <!-- Health Monitoring -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-purple-200 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-heart-pulse-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">Health Monitoring</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Track your vital signs and health metrics with our smart monitoring tools. Get personalized insights and health trend analysis.
+                </p>
+            </div>
+
+            <!-- Awareness Campaign -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-orange-200 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-megaphone-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">Awareness Campaign</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Community health awareness posts and campaigns designed to educate rural populations about preventive care, disease awareness, and healthy lifestyle practices.
+                </p>
+            </div>
+
+            <!-- Health Education -->
+            <div class="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-teal-200 hover:-translate-y-1">
+                <div class="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="ri-book-open-line text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-health-dark mb-4">Health Education</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Access comprehensive health resources, preventive care guides, and wellness tips specifically curated for rural communities.
+                </p>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-16">
+            <div class="bg-gradient-to-r from-health-blue to-blue-600 rounded-2xl p-8 lg:p-12 text-white">
+                <h3 class="text-2xl lg:text-3xl font-bold mb-4">Ready to Get Started?</h3>
+                <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
+                    Join thousands of rural community members who trust our AI-powered healthcare solutions for better health outcomes.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-health-blue px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors inline-flex items-center justify-center">
+                        <i class="ri-chat-1-line mr-2"></i>
+                        Start Free Consultation
+                    </button>
+                    <button class="border-2 border-white/30 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition-colors inline-flex items-center justify-center">
+                        <i class="ri-phone-line mr-2"></i>
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+        </div>
+
+       
+    </section>
+
+<!-- Contact Us Section -->
+<section id="contact" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-blue-600 mb-4">Contact Us</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Get in touch with our team for support or general inquiries
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <!-- Contact Information -->
+            <div>
+                <h3 class="text-2xl font-semibold text-black mb-6">Get In Touch</h3>
+                <p class="text-gray-600 mb-8">
+                    We're here to help bridge the gap in rural healthcare. Whether you're a healthcare provider looking
+                    to partner with us, a community leader interested in implementing our solutions, or someone who
+                    needs support, we'd love to hear from you.
+                </p>
+
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-blue-100 p-3 rounded-full mt-1">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Email</h4>
+                            <p class="text-gray-600">support@ruralhealthai.com</p>
+                            <p class="text-gray-600">partnerships@ruralhealthai.com</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-blue-100 p-3 rounded-full mt-1">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Phone</h4>
+                            <p class="text-gray-600">1-800-RURAL-AI (1-800-787-2524)</p>
+                            <p class="text-gray-600 text-sm">Available 24/7 for emergencies</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-blue-100 p-3 rounded-full mt-1">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Address</h4>
+                            <p class="text-gray-600">123 Healthcare Innovation Drive</p>
+                            <p class="text-gray-600">Rural Health Center, State 12345</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <h4 class="font-semibold text-black mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                      <a href="#" class="w-10 h-10 bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white rounded-xl flex items-center justify-center ">
+                            <i class="ri-facebook-fill text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-100 hover:bg-blue-400 text-gray-600 hover:text-white rounded-xl flex items-center justify-center ">
+                            <i class="ri-twitter-x-fill text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-100 hover:bg-blue-700 text-gray-600 hover:text-white rounded-xl flex items-center justify-center ">
+                            <i class="ri-linkedin-fill text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-100 hover:bg-pink-600 text-gray-600 hover:text-white rounded-xl flex items-center justify-center ">
+                            <i class="ri-instagram-fill text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Contact Form -->
+            <div class="bg-gray-50 p-8 rounded-2xl">
+                <h3 class="text-xl font-semibold text-blue-600 mb-6">Send us a message</h3>
+                <form class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Enter your first name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Enter your last name">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Enter your email address">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Enter your phone number">
+                    </div>
+
+                    
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea rows="4"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Tell us how we can help you..."></textarea>
+                    </div>
+
+
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                        <span>Send Message</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Emergency Notice -->
+        <div class="mt-12 bg-red-50 border border-red-200 rounded-2xl p-6">
+            <div class="flex items-start space-x-4">
+                <div class="bg-red-100 p-2 rounded-full">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-red-900 mb-2">Medical Emergency Notice</h4>
+                    <p class="text-red-800">
+                        If you are experiencing a medical emergency, please call 911 immediately or go to your nearest
+                        emergency room.
+                        Rural Health AI is designed to provide health guidance and support, but it is not a substitute
+                        for emergency medical care.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+</script>
+{% endblock %}

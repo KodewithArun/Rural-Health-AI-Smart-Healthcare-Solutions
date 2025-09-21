@@ -1,0 +1,117 @@
+<!-- Footer -->
+<footer class="bg-white text-gray-900 relative overflow-hidden border-t border-gray-200">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-30">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-50/50 to-indigo-50/50"></div>
+        <div class="absolute top-10 left-10 w-32 h-32 bg-blue-100/30 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-20 w-40 h-40 bg-indigo-100/30 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10">
+        <!-- Main Footer Content -->
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+                    
+                    <!-- Copyright -->
+                    <div class="flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 lg:space-x-6">
+                        <p class="text-gray-600 text-sm">
+                            © 2024 Rural Health AI. All rights reserved.
+                        </p>
+                       
+                    </div>
+                     <div class="flex items-center space-x-6">
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-300 text-sm">Privacy Policy</a>
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-300 text-sm">Terms of Service</a>
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-300 text-sm">Cookie Policy</a>
+                    </div>
+
+                  
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll to Top Button -->
+        <button 
+            id="scroll-to-top"
+            class="fixed bottom-8 right-8 w-12 h-12  text-blue-600 rounded-lg border border-blue-600 transition-all duration-300 flex items-center justify-center opacity-0 invisible hover:scale-110 z-50"
+        >
+            <i class="ri-arrow-up-line text-xl"></i>
+        </button>
+    </div>
+</footer>
+
+<script>
+    // Scroll to top functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        
+        // Show/hide scroll to top button
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.remove('opacity-0', 'invisible');
+                scrollToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                scrollToTopBtn.classList.add('opacity-0', 'invisible');
+                scrollToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // Scroll to top when clicked
+        scrollToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Newsletter form submission
+        const newsletterForm = document.querySelector('.flex.gap-2');
+        const emailInput = newsletterForm.querySelector('input[type="email"]');
+        const submitBtn = newsletterForm.querySelector('button');
+        
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            
+            if (email && isValidEmail(email)) {
+                // Show success feedback
+                submitBtn.innerHTML = '<i class="ri-check-line"></i>';
+                submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="ri-send-plane-2-line"></i>';
+                    submitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    submitBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    emailInput.value = '';
+                }, 2000);
+            }
+        });
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    });
+</script>
+
+<style>
+    /* Additional hover effects for footer */
+    .footer-link-hover:hover {
+        transform: translateX(4px);
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    footer a, footer button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Custom scrollbar for newsletter input */
+    footer input:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+</style>
