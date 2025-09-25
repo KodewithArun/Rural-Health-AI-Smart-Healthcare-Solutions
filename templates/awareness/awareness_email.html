@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ subject }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            color: #1f2937; /* Tailwind text-gray-800 */
+            max-width: 42rem; /* max-w-2xl */
+            margin: 0 auto;
+            padding: 1.5rem; /* p-6 */
+            background-color: #ffffff; /* bg-white */
+        }
+
+        .header {
+            background-color: #1d4ed8; /* bg-blue-700 */
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .content {
+            background-color: #f9fafb; /* bg-gray-50 */
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .content h2 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            color: white;
+            padding: 0.25rem 0.75rem; /* px-3 py-1 */
+            border-radius: 0.25rem; /* rounded */
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge-event {
+            background-color: #16a34a; /* bg-green-600 */
+        }
+
+        .badge-info {
+            background-color: #2563eb; /* bg-blue-600 */
+        }
+
+        .my-6 {
+            margin: 1.5rem 0;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .list-disc {
+            list-style-type: disc;
+            padding-left: 1.5rem; /* pl-6 */
+        }
+
+        .pdf-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #ecfdf5; /* bg-green-50 */
+            border-left: 4px solid #16a34a; /* border-green-600 */
+            border-radius: 0.25rem;
+        }
+
+        .pdf-section h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pdf-section span {
+            color: #b91c1c; /* text-red-700 */
+            margin-right: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            color: white;
+            padding: 0.5rem 1rem; /* px-4 py-2 */
+            border-radius: 0.25rem;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-blue {
+            background-color: #2563eb;
+        }
+
+        .btn-blue:hover {
+            background-color: #1e40af;
+        }
+
+        .btn-green {
+            background-color: #16a34a;
+            margin-top: 1rem;
+            padding: 0.5rem 1.25rem; /* px-5 py-2 */
+        }
+
+        .btn-green:hover {
+            background-color: #15803d;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* text-gray-500 */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Rural Health AI - Smart Healthcare Solutions</h1>
+    </div>
+    
+    <div class="content">
+        <h2>{{ subject }}</h2>
+        
+        {% if awareness.is_event %}
+            <span class="badge badge-event">Event</span>
+        {% else %}
+            <span class="badge badge-info">Information</span>
+        {% endif %}
+        
+        <div class="my-6">
+            <p class="mb-2">A new awareness program has been posted:</p>
+            <ul class="list-disc">
+                <li><strong>Title:</strong> {{ awareness.title }}</li>
+                <li><strong>Description:</strong> {{ awareness.description }}</li>
+                {% if awareness.is_event and awareness.event_date %}
+                    <li><strong>Event Date:</strong> {{ awareness.event_date }}</li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        {% if awareness.pdf %}
+        <div class="pdf-section">
+            <h3><span>📄</span> Additional Materials</h3>
+            <p class="mb-2">A PDF document with more detailed information is available:</p>
+            <a href="{{ site_url }}{{ awareness.pdf.url }}" class="btn btn-blue" target="_blank">
+                Download PDF
+            </a>
+        </div>
+        {% endif %}
+        
+        <p class="my-6">Please visit our portal for more details and to view all available materials.</p>
+        
+        <a href="{{ site_url }}" class="btn btn-green">Visit Portal</a>
+        
+        <div class="footer">
+            <p>This is an automated notification from the Rural Awareness Portal.</p>
+            <p>&copy; 2025 Rural Awareness Project. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

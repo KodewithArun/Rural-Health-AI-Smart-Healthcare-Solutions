@@ -34,18 +34,20 @@
                         class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
                     </div>
                 </a>
-                <a href="#services"
+               
+                <a href="#awareness"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
-                    <i class="ri-stethoscope-line text-lg"></i>
-                    <span>Services</span>
+                    <i class="ri-information-line text-lg"></i>
+                    <span>Health Awareness</span>
                     <div
                         class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
                     </div>
                 </a>
-                <a href="#about"
+
+                 <a href="#services"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
-                    <i class="ri-information-line text-lg"></i>
-                    <span>About</span>
+                    <i class="ri-stethoscope-line text-lg"></i>
+                    <span>Services</span>
                     <div
                         class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
                     </div>
@@ -122,7 +124,7 @@
                 <i class="ri-home-5-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Home</span>
             </a>
-            <a href="#chat"
+            <a href="{% url 'chat:index' %}"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-chat-3-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">AI Chat</span>
@@ -132,23 +134,46 @@
                 <i class="ri-stethoscope-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Services</span>
             </a>
-            <a href="#about"
+            <a href="#awareness"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-information-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
-                <span class="font-medium">About</span>
+                <span class="font-medium">Health Awareness</span>
             </a>
             <a href="#contact"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-phone-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Contact</span>
             </a>
-            <div class="pt-3 border-t border-gray-200">
-                <button
-                    class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
-                    <i class="ri-rocket-line"></i>
-                    <span>Get Started</span>
-                </button>
-            </div>
+            {% if user.is_authenticated %}
+                <div class="pt-3 border-t border-gray-200">
+                    <a href=""
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                        <i class="ri-user-line"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="{% url 'chat:chat_history' %}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                        <i class="ri-history-line"></i>
+                        <span>Chat History</span>
+                    </a>
+                    <form method="POST" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                            <i class="ri-logout-box-line"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="pt-3 border-t border-gray-200">
+                    <a href="{% url 'accounts:login' %}"
+                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="ri-rocket-line"></i>
+                        <span>Get Started</span>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </nav>

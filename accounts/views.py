@@ -13,7 +13,7 @@ def register_view(request):
         if hasattr(request.user, 'is_villager') and request.user.is_villager:
             return redirect('home')  # URL name for villager home
         else:
-            return redirect('documents:dashboard')
+            return redirect('admin:index')
         
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -32,7 +32,7 @@ def login_view(request):
         if hasattr(request.user, 'is_villager') and request.user.is_villager:
             return redirect('home')  # URL name for villager home
         else:
-            return redirect('documents:dashboard')
+            return redirect('admin:index')
 
     if request.method == 'POST':
         identifier = request.POST.get('identifier')  # username OR email
@@ -56,7 +56,7 @@ def login_view(request):
             if hasattr(user, 'is_villager') and user.is_villager:
                 return redirect('home')
             else:
-                return redirect('documents:dashboard')
+                return redirect('admin:index')
         else:
             messages.error(request, 'Invalid username/email or password.')
 

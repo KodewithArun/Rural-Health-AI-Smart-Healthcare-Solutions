@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Healthcare Chat Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -20,13 +23,15 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen">
-    
-  {% include 'includes/navbar.html' %}
 
-  {% block content %}
-  {% endblock %}
+    {% include 'includes/navbar.html' %}
 
-  {% include 'includes/footer.html' %}
+    {% block content %}
+    {% endblock %}
+
+    {% include 'includes/footer.html' %}
 </body>
+
 </html>

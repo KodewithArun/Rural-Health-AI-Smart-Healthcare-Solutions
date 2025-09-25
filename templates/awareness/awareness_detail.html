@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Main Container -->
+<div class="min-h-screen bg-gray-50">
+    
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <nav class="flex items-center justify-between">
+               <div>
+
+               </div>
+                <a href="{% url 'awareness_list' %}" 
+                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-all duration-200">
+                    <i class="ri-arrow-left-line mr-2"></i>
+                    Back to List
+                </a>
+            </nav>
+        </div>
+    </div>
+
+  
+
+    <!-- Main Content Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Description Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="ri-file-text-line mr-3 text-blue-500"></i>
+                            Health Information
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="prose max-w-none text-gray-700 leading-relaxed">
+                            {{ awareness_item.description|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Section (Mobile/Desktop) -->
+                {% if awareness_item.photo %}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="ri-image-line mr-3 text-blue-500"></i>
+                            Related Image
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="relative group">
+                            <img src="{{ awareness_item.photo.url }}" 
+                                 alt="{{ awareness_item.title }}" 
+                                 class="w-full h-64 sm:h-80 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-lg transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                
+                <!-- Quick Info Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-blue-50 px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="ri-information-line mr-3 text-blue-500"></i>
+                            Quick Details
+                        </h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        
+                        <!-- Type -->
+                        <div class="flex items-center justify-between py-2">
+                            <span class="text-sm font-medium text-gray-600">Type:</span>
+                            <div class="text-right">
+                                {% if awareness_item.is_event %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="ri-calendar-check-line mr-1"></i>
+                                        Health Event
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                        <i class="ri-article-line mr-1"></i>
+                                        Information
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Event Date (if applicable) -->
+                        {% if awareness_item.is_event %}
+                        <div class="flex items-center justify-between py-2 border-t border-gray-100">
+                            <span class="text-sm font-medium text-gray-600">Event Date:</span>
+                            <div class="text-right">
+                                {% if awareness_item.event_date %}
+                                    <span class="text-sm font-semibold text-gray-900">
+                                        {{ awareness_item.event_date|date:"M d, Y" }}
+                                    </span>
+                                    <div class="text-xs text-gray-500">
+                                        {{ awareness_item.event_date|date:"l" }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-sm text-gray-500">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Published Date -->
+                        <div class="flex items-center justify-between py-2 border-t border-gray-100">
+                            <span class="text-sm font-medium text-gray-600">Published:</span>
+                            <div class="text-right">
+                                <span class="text-sm font-semibold text-gray-900">
+                                    {{ awareness_item.created_at|date:"M d, Y" }}
+                                </span>
+                                <div class="text-xs text-gray-500">
+                                    {{ awareness_item.created_at|date:"H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-green-50 px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="ri-download-cloud-line mr-3 text-green-600"></i>
+                            Resources
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        {% if awareness_item.pdf %}
+                            <a href="{{ awareness_item.pdf.url }}" 
+                               target="_blank"
+                               class="block w-full group">
+                                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white hover:from-green-600 hover:to-green-700 transition-all duration-200">
+                                    <div class="flex items-center">
+                                        <div class="bg-white bg-opacity-20 p-2 rounded-lg mr-4">
+                                            <i class="ri-file-pdf-line text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-sm">Download PDF</h4>
+                                            <p class="text-green-100 text-xs">Detailed health information</p>
+                                        </div>
+                                        <i class="ri-external-link-line ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        {% else %}
+                            <div class="text-center py-8">
+                                <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                    <i class="ri-file-unknow-line text-2xl text-gray-400"></i>
+                                </div>
+                                <p class="text-sm text-gray-500">No PDF available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 space-y-3">
+                        <button onclick="window.print()" 
+                                class="w-full inline-flex items-center justify-center px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                            <i class="ri-printer-line mr-2"></i>
+                            Print Information
+                        </button>
+                        <button onclick="shareContent()" 
+                                class="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium rounded-lg transition-colors duration-200">
+                            <i class="ri-share-forward-line mr-2"></i>
+                            Share Information
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+</div>
+
+<script>
+function shareContent() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ awareness_item.title }}',
+            text: 'Check out this health information: {{ awareness_item.title }}',
+            url: window.location.href
+        }).then(() => {
+            console.log('Thanks for sharing!');
+        }).catch(console.error);
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        } else {
+            alert('Sharing not supported on this browser');
+        }
+    }
+}
+
+// Add smooth scroll behavior
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

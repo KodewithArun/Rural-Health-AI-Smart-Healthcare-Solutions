@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Header Section -->
+<div class=" text-blue-600 py-12 px-4 relative overflow-hidden">
+    <div class="absolute inset-0 "></div>
+    <div class="max-w-6xl mx-auto text-center relative z-10">
+        <div class="inline-flex items-center bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <i class="ri-heart-pulse-fill mr-2"></i>
+            Health Education
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Health Awareness Programs</h1>
+        <p class="text-xl text-black max-w-3xl mx-auto">
+            Stay informed with our comprehensive health education programs, preventive care guides, and wellness
+            insights designed for rural communities.
+        </p>
+    </div>
+</div>
+
+
+
+<!-- Awareness Programs Grid -->
+<section class=" py-16" id="awareness">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Posts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for awareness_post in page_obj %}
+            <!-- Post 1: Diabetes Prevention -->
+            <div
+                class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                <div class="relative">
+                    <img src="{{ awareness_post.photo.url }}" alt="Diabetes Prevention"
+                        class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-sm text-gray-500 mb-3">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        {{ awareness_post.created_at|date:"M d, Y" }}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                        {{ awareness_post.title }}
+                    </h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        {{ awareness_post.description|truncatewords:40 }}
+                    </p>
+                    <div class="flex items-center justify-between">
+                        {% if awareness_post.is_event %}
+                        <span class="text-sm text-gray-500">
+                            <b>Event Date:</b>
+                            {{ awareness_post.event_date|date:"M d, Y" }}</span>
+                        {% endif %}
+                        <a href="{% url 'awareness_detail' awareness_post.pk %}" class="text-green-600 hover:text-green-700 font-medium text-sm transition-colors">
+                            Read More →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="mt-12 flex justify-center space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"
+            class="px-4 py-2 border-2 border-blue-600 text-blue-600 hover:text-white rounded-lg hover:bg-blue-700 transition-colors">Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span
+            class="px-4 py-2 border-2 border-blue-600 text-white bg-blue-600 rounded-lg font-bold">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}"
+            class="px-4 py-2 bg-gray-200 text-blue-600 rounded-lg hover:bg-gray-300 transition-colors">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+            class="px-4 py-2 border-2 border-blue-600 text-blue-600 hover:text-white rounded-lg hover:bg-blue-700 transition-colors">Next</a>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+
+
+{% endblock %}

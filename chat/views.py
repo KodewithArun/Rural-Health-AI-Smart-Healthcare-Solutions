@@ -19,8 +19,8 @@ from accounts.models import User
 
 @login_required
 def index(request):
-    if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
-        return redirect('documents:dashboard')
+    # if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
+    #     return redirect('documents:dashboard')
 
     chat_form = ChatForm()
     recent_chats = ChatHistory.objects.filter(user=request.user).order_by('-timestamp')[:10]
@@ -35,8 +35,8 @@ def index(request):
 @login_required
 @require_POST
 def send_message(request):
-    if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
-        return JsonResponse({'error': 'Health workers cannot chat with the bot'}, status=403)
+    # if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
+    #     return JsonResponse({'error': 'Health workers cannot chat with the bot'}, status=403)
 
     form = ChatForm(request.POST)
     if form.is_valid():
@@ -71,8 +71,8 @@ def send_message(request):
 
 @login_required
 def chat_history(request):
-    if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
-        return redirect('documents:dashboard')
+    # if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
+    #     return redirect('documents:dashboard')
 
     chats = ChatHistory.objects.filter(user=request.user).order_by('-timestamp')
 
@@ -109,8 +109,8 @@ def delete_chat(request, chat_id):
 @login_required
 @require_POST
 def clear_chat_history(request):
-    if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
-        return JsonResponse({'error': 'Health workers cannot clear chat history'}, status=403)
+    # if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
+    #     return JsonResponse({'error': 'Health workers cannot clear chat history'}, status=403)
 
     ChatHistory.objects.filter(user=request.user).delete()
     messages.success(request, 'Chat history cleared successfully.')
@@ -119,8 +119,8 @@ def clear_chat_history(request):
 
 @login_required
 def export_chat_history(request):
-    if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
-        return redirect('documents:dashboard')
+    # if hasattr(request.user, "is_health_worker") and request.user.is_health_worker:
+    #     return redirect('documents:dashboard')
 
     chats = ChatHistory.objects.filter(user=request.user).order_by('timestamp')
     response = HttpResponse(content_type='text/plain')

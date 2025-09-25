@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "accounts",
     "chat",
     "documents",
+    "awareness",
    
 ]
 
@@ -153,8 +154,8 @@ RAG_CONFIG = {
     "CHUNK_SIZE": 1000,
     "CHUNK_OVERLAP": 200,
     "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
-    "LLM_MODEL": "llama-3.1-8b-instant",   # example, change as needed
-    "TEMPERATURE": 0.1,
+    "LLM_MODEL": "gemini-2.5-flash",   # example, change as needed
+    "TEMPERATURE": 0,
     "MAX_TOKENS": 2048,
     "RETRIEVER_K": 3
 }
@@ -162,3 +163,15 @@ RAG_CONFIG = {
 # Ensure you have your Groq/other key if using ChatGroq:
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
+GOOGLE_GENAI_API_KEY = os.environ.get("GOOGLE_GENAI_API_KEY", "")
+
+
+# Email Configuration
+SITE_URL = 'http://127.0.0.1:8000'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

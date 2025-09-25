@@ -2,38 +2,45 @@
 from django.conf import settings
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-from langchain_groq import ChatGroq   # or your chosen LLM wrapper
+# from langchain_groq import ChatGroq   
+from langchain_google_genai import ChatGoogleGenerativeAI
 from .vector_store_update import get_retriever, get_vector_store
+
+from langchain.prompts import PromptTemplate
 
 def get_prompt_template():
     template = """
-You are a **Rural Health Assistant**, providing **friendly, professional, and accurate health guidance** based on the information in the provided context. Follow these instructions:
+You are a **Rural Health Assistant**. Your role is to provide **friendly, professional, and accurate health guidance**.
 
-1. Answer strictly using the context; do NOT invent facts.
-2. If context lacks the answer, respond: "I don't have enough information to answer this question."
-3. Keep answers clear and simple.
-4. Highlight key actions in bold.
-5. Suggest consulting a healthcare professional if needed.
-Context:
+**Instructions:**
+1. Answer strictly using the provided context; do NOT invent or assume any information.
+2. If the context does not contain the answer, respond exactly: "I don't have enough information to answer this question."
+3. Keep answers clear, concise, and simple.
+4. Highlight key actions in **bold**.
+5. Always suggest consulting a healthcare professional if appropriate.
+6. if user greets you, greet them back warmly.
+
+**Context:** 
 {context}
 
-User question:
+**User question:** 
 {question}
 
-Answer:
+**Answer (use only the context):**
 """
     return PromptTemplate(input_variables=["context", "question"], template=template)
 
+
 def get_llm():
     rag_config = getattr(settings, "RAG_CONFIG", {})
-    model_name = rag_config.get("LLM_MODEL", "llama-3.1-8b-instant")
+    model_name = rag_config.get("LLM_MODEL", "gemini-2.5-flash")
     temperature = rag_config.get("TEMPERATURE", 0.1)
     max_tokens = rag_config.get("MAX_TOKENS", 2048)
-    api_key = getattr(settings, "GROQ_API_KEY", None)
+    api_key = getattr(settings, "GOOGLE_GENAI_API_KEY", None)
     if not api_key:
         # It's better to raise than to fail silently
-        raise RuntimeError("GROQ_API_KEY (or the configured LLM_API_KEY) is missing in settings")
-    return ChatGroq(model=model_name, temperature=temperature, max_tokens=max_tokens, groq_api_key=api_key)
+        raise RuntimeError("GOOGLE_GENAI_API_KEY (or the configured LLM_API_KEY) is missing in settings")
+    return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, max_tokens=max_tokens, api_key=api_key)
 
 def get_rag_response(question: str, k: int = None):
     """

@@ -2,6 +2,196 @@
 
 
 {% block content %}
+
+
+<!-- Hero Section with Swiper -->
+<section class="overflow-hidden" id="home">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Swiper Container -->
+    <div class="swiper heroSwiper">
+      <div class="swiper-wrapper">
+        
+        <!-- Slide 1: AI Healthcare -->
+        <div class="swiper-slide">
+          <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[560px]">
+            <!-- Left Content -->
+            <div class="space-y-8 order-2 lg:order-1">
+              <div class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+                AI-Powered Healthcare
+              </div>
+              
+              <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                Smart Health
+                <span class="text-blue-600 block">AI Assistant</span>
+              </h1>
+              
+              <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                Get instant medical guidance, symptom assessment, and healthcare recommendations through our advanced AI chatbot. Available 24/7 to support rural communities.
+              </p>
+              
+              <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
+               <a href="{% url 'chat:index' %}">Start Chat</a>
+                <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </button>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="relative order-1 lg:order-2">
+              <div class="relative overflow-hidden rounded-2xl shadow-2xl ">
+                <img src="https://imgs.search.brave.com/J8Sy1wB0yNacGYlvABUDAeL2NgTT6BCuUuDevoFKmJI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9haS1jaGF0Ym90/LWludGVsbGlnZW50/LWRpZ2l0YWwtY3Vz/dG9tZXItc2Vydmlj/ZS1hcHBsaWNhdGlv/bi1jb25jZXB0LWNv/bXB1dGVyLW1vYmls/ZS1hcHBsaWNhdGlv/bi11c2VzLWFydGlm/aWNpYWwtaW50ZWxs/aWdlbmNlLWNoYXRi/b3RzLWF1dG9tYXRp/Y2FsbHktcmVzcG9u/ZC1vbmxpbmUtbWVz/c2FnZXMtaGVscC1j/dXN0b21lcnMtaW5z/dGFudGx5XzEyMjY1/NDUtNDgyLmpwZz9z/ZW10PWFpc19oeWJy/aWQmdz03NDA" 
+                     alt="AI Healthcare Technology" 
+                     class="w-full h-[500px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <p class="text-sm font-medium text-gray-800">AI Health Technology</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Health Awareness -->
+        <div class="swiper-slide">
+          <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
+            <!-- Left Content -->
+            <div class="space-y-8 order-2 lg:order-1">
+              <div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                Health Education
+              </div>
+              
+              <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                Stay Informed
+                <span class="text-green-600 block">Stay Healthy</span>
+              </h1>
+              
+              <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                Access reliable health information, preventive care tips, and wellness guidance tailored for rural communities. Knowledge is your first line of defense.
+              </p>
+              
+              <button class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
+                Learn More
+                <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </button>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="relative order-1 lg:order-2">
+              <div class="relative overflow-hidden rounded-2xl shadow-2xl ">
+                <img src="https://imgs.search.brave.com/uWEVD4VuaGy208-_zCcUPQvOxUuY03iiBEZ00dcQimU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTEz/MDkzNDgzOC9waG90/by9kb2N0b3ItZG9p/bmctc29jaWFsLXNl/cnZpY2UtaW4tdmls/bGFnZS5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9STdUNVdi/c3pGWF9rRHB0Y3VR/N3FHWFFtNXJTdThD/a0ZYX01GUUZpNXct/Zz0" 
+                     alt="Health Awareness and Wellness" 
+                     class="w-full h-[500px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-green-600/20 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <p class="text-sm font-medium text-gray-800">Wellness & Prevention</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Emergency Support -->
+        <div class="swiper-slide">
+          <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
+            <!-- Left Content -->
+            <div class="space-y-8 order-2 lg:order-1">
+              <div class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                Emergency Ready
+              </div>
+              
+              <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                24/7 Emergency
+                <span class="text-red-600 block">Support</span>
+              </h1>
+              
+              <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                When every second counts, get immediate guidance for emergency situations. Critical first-aid instructions and emergency protocols at your fingertips.
+              </p>
+              
+              <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
+                Emergency Information 
+                <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">⚡</span>
+              </button>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="relative order-1 lg:order-2">
+              <div class="relative overflow-hidden rounded-2xl shadow-2xl ">
+                <img src="https://imgs.search.brave.com/4xbv03CYgGTE0LrmzT1CRMrCFsg3Hfu8J-1ZLjllkLo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ub3J2/aWNob3NwaXRhbC5j/b20vYXNzZXRzL2lt/Zy9vdXItc2Vydmlj/ZXMvb3VyLXNlcnZp/Y2VzLTY4NjI4MmMz/Yjk3NDJFbWVyZ2Vu/Y3ktMTAyNHgxMDI0/LnBuZw"
+                     alt="Emergency Healthcare Support" 
+                     class="w-full h-[500px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-red-600/20 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <p class="text-sm font-medium text-gray-800">Emergency Care</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <!-- Navigation -->
+      <div class="swiper-pagination !bottom-8 !left-1/2 !transform !-translate-x-1/2"></div>
+      
+    </div>
+  </div>
+</section>
+
+<script>
+  // Initialize Swiper
+  const swiper = new Swiper('.heroSwiper', {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+      dynamicBullets: true,
+      bulletClass: 'swiper-pagination-bullet',
+      bulletActiveClass: 'swiper-pagination-bullet-active',
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    effect: 'slide',
+    speed: 800,
+    spaceBetween: 30,
+    grabCursor: true,
+    keyboard: {
+      enabled: true,
+    },
+    breakpoints: {
+      640: {
+        spaceBetween: 20,
+      },
+      768: {
+        spaceBetween: 30,
+      },
+      1024: {
+        spaceBetween: 40,
+      }
+    }
+  });
+
+  // Add smooth parallax effect
+  swiper.on('slideChangeTransitionStart', function () {
+    const activeSlide = document.querySelector('.swiper-slide-active');
+    const images = activeSlide.querySelectorAll('img');
+    images.forEach(img => {
+      img.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        img.style.transform = 'scale(1)';
+      }, 300);
+    });
+  });
+</script>
  <!-- About Us Section -->
  
 
@@ -147,8 +337,82 @@
 </div>
 
 
+<!-- Health Awareness Posts Section -->
+<section class=" py-16" id="awareness">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
+        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+        Health Education
+      </div>
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        Latest Health <span class="text-green-600">Awareness</span> Posts
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Stay informed with our latest health tips, preventive care guides, and wellness insights designed for rural communities.
+      </p>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+       {% for awareness_post in awareness %}
+      <!-- Post 1: Diabetes Prevention -->
+      <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+        <div class="relative">
+          <img src="{{ awareness_post.photo.url }}" 
+               alt="Diabetes Prevention" 
+               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+          
+        </div>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-3">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+           {{ awareness_post.created_at|date:"M d, Y" }}
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+            {{ awareness_post.title }}
+          </h3>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            {{ awareness_post.description|truncatewords:40 }}
+          </p>
+          <div class="flex items-center justify-between">
+            {% if awareness_post.is_event %}
+                <span class="text-sm text-gray-500">
+                   <b>Event Date:</b>
+                    {{ awareness_post.event_date|date:"M d, Y" }}</span>
+            {% endif %}
+            <a href="{% url 'awareness_detail' awareness_post.id %}" class="text-green-600 hover:text-green-700 font-medium text-sm transition-colors">
+              Read More →
+            </a>
+          </div>
+        </div>
+      </div>
+        {% endfor %}
+
+  
+
+    </div>
+
+    <!-- Load More Button -->
+    <div class="text-right mt-12">
+      <a class="border border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl pointer-events-auto inline-flex items-center"
+         href="{% url 'awareness_list' %}">
+        Load More Posts 
+        <span class="ml-2">
+            <i class="ri-arrow-right-line"></i>
+        </span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
  <!-- Services Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="services">
         <!-- Section Header -->
         <div class="text-center mb-16">
             <div class="inline-flex items-center gap-2 bg-health-light-blue text-health-blue px-4 py-2 rounded-full text-sm font-medium mb-6">
@@ -231,26 +495,6 @@
                 <p class="text-gray-600 leading-relaxed">
                     Access comprehensive health resources, preventive care guides, and wellness tips specifically curated for rural communities.
                 </p>
-            </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div class="text-center mt-16">
-            <div class="bg-gradient-to-r from-health-blue to-blue-600 rounded-2xl p-8 lg:p-12 text-white">
-                <h3 class="text-2xl lg:text-3xl font-bold mb-4">Ready to Get Started?</h3>
-                <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
-                    Join thousands of rural community members who trust our AI-powered healthcare solutions for better health outcomes.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-white text-health-blue px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors inline-flex items-center justify-center">
-                        <i class="ri-chat-1-line mr-2"></i>
-                        Start Free Consultation
-                    </button>
-                    <button class="border-2 border-white/30 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition-colors inline-flex items-center justify-center">
-                        <i class="ri-phone-line mr-2"></i>
-                        Contact Support
-                    </button>
-                </div>
             </div>
         </div>
 
