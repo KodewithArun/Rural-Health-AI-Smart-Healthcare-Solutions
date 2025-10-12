@@ -183,6 +183,8 @@ RAG_CONFIG = {
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 GOOGLE_GENAI_API_KEY = os.environ.get("GOOGLE_GENAI_API_KEY", "")
+SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY", "")
+
 
 
 # Email Configuration

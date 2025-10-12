@@ -13,3 +13,6 @@ langchain-chromadb
 chromadb
 pypdf
 python-dotenv
+langgraph
+google-search-results
+langchain-google-community

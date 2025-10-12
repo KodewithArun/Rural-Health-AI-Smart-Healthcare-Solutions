@@ -42,7 +42,15 @@ def get_llm():
         raise RuntimeError("GOOGLE_GENAI_API_KEY (or the configured LLM_API_KEY) is missing in settings")
     return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, max_tokens=max_tokens, api_key=api_key)
 
+from .agentic_rag import get_agentic_rag_response
+
 def get_rag_response(question: str, k: int = None):
+    """
+    Returns {"answer": ..., "sources": [ {title, content, metadata}, ... ] }
+    """
+    # This function now delegates to the new agentic RAG.
+    # The old implementation is preserved below for reference but is no longer used.
+    return get_agentic_rag_response(question)
     """
     Returns {"answer": ..., "sources": [ {title, content, metadata}, ... ] }
     """

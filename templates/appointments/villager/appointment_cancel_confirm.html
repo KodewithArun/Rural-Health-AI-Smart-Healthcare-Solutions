@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Cancel Appointment</h2>
-<p>Are you sure you want to cancel appointment on {{ appointment.date }} at {{ appointment.time }}?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Cancel</button>
-    <a href="{% url 'appointments:list' %}">No</a>
-</form>
+<div class="bg-gray-50 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="bg-white shadow-xl rounded-2xl p-8 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
+                <i class="ri-error-warning-line text-2xl text-yellow-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mt-4">
+                Confirm Cancellation
+            </h2>
+            <p class="text-gray-600 mt-2">
+                Are you sure you want to cancel your appointment on <strong>{{ appointment.date|date:"F d, Y" }}</strong> at <strong>{{ appointment.time|time:"h:i A" }}</strong>?
+            </p>
+            <form method="post" class="mt-6">
+                {% csrf_token %}
+                <div class="flex justify-center gap-4">
+                    <a href="{% url 'appointments:list' %}" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                        No, Go Back
+                    </a>
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                        Yes, Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
