@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Confirm Delete</h2>
+<p>Are you sure you want to delete appointment for {{ appointment.villager.username }} on {{ appointment.date }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'appointments:list' %}">Cancel</a>
+</form>
+{% endblock %}

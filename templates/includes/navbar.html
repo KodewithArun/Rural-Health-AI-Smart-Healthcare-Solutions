@@ -1,6 +1,6 @@
 <!-- Navigation -->
 <nav class="nav-backdrop sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-14">
         <div class="flex justify-between items-center h-20">
             <!-- Logo Section -->
             <div class="flex items-center space-x-4">
@@ -34,7 +34,7 @@
                         class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
                     </div>
                 </a>
-               
+
                 <a href="#awareness"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-information-line text-lg"></i>
@@ -44,7 +44,7 @@
                     </div>
                 </a>
 
-                 <a href="#services"
+                <a href="#services"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-stethoscope-line text-lg"></i>
                     <span>Services</span>
@@ -57,6 +57,15 @@
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-phone-line text-lg"></i>
                     <span>Contact</span>
+                    <div
+                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
+                    </div>
+                </a>
+
+                <a href="{% url 'appointments:create' %}"
+                    class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
+                    <i class="ri-calendar-line text-lg"></i>
+                    <span>Book Appointment</span>
                     <div
                         class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
                     </div>
@@ -79,8 +88,7 @@
                     <div
                         class="absolute right-0 mt-2 w-32 rounded-lg shadow-lg bg-gray-50 ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200">
                         <div class="py-1">
-                            <a href=""
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile
+                            <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile
                             </a>
                             <a href="{% url 'chat:chat_history' %}"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Chat History
@@ -144,35 +152,42 @@
                 <i class="ri-phone-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Contact</span>
             </a>
+            <!-- appointment -->
+            <a href="{% url 'appointments:create' %}"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
+                <i class="ri-calendar-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
+                <span class="font-medium">Book Appointment</span>
+            </a>
+
             {% if user.is_authenticated %}
-                <div class="pt-3 border-t border-gray-200">
-                    <a href=""
-                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                        <i class="ri-user-line"></i>
-                        <span>Profile</span>
-                    </a>
-                    <a href="{% url 'chat:chat_history' %}"
-                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                        <i class="ri-history-line"></i>
-                        <span>Chat History</span>
-                    </a>
-                    <form method="POST" action="{% url 'accounts:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                            <i class="ri-logout-box-line"></i>
-                            <span>Logout</span>
-                        </button>
-                    </form>
-                </div>
+            <div class="pt-3 border-t border-gray-200">
+                <a href=""
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                    <i class="ri-user-line"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="{% url 'chat:chat_history' %}"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                    <i class="ri-history-line"></i>
+                    <span>Chat History</span>
+                </a>
+                <form method="POST" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                        <i class="ri-logout-box-line"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
             {% else %}
-                <div class="pt-3 border-t border-gray-200">
-                    <a href="{% url 'accounts:login' %}"
-                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
-                        <i class="ri-rocket-line"></i>
-                        <span>Get Started</span>
-                    </a>
-                </div>
+            <div class="pt-3 border-t border-gray-200">
+                <a href="{% url 'accounts:login' %}"
+                    class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="ri-rocket-line"></i>
+                    <span>Get Started</span>
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>

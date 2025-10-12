@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "django.contrib.admin",  # required
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -42,8 +42,27 @@ INSTALLED_APPS = [
     "chat",
     "documents",
     "awareness",
+    "appointments",
+  
    
 ]
+
+
+CELERY_BEAT_SCHEDULE = {
+    'auto-cancel-appointments': {
+        'task': 'appointments.tasks.auto_cancel_appointments',
+        'schedule': 30.0,  # Run every 30 minutes
+    },
+}
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # using Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -75,7 +94,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "rural_health_assistant.wsgi.application"
 
 # Custom user model
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = 'accounts.Account'
 
 
 

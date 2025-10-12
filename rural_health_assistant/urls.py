@@ -7,10 +7,14 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('healthworkerdashboard/', views.healthworker_dashboard, name='healthworkerdashboard'),
     path('accounts/', include('accounts.urls')),
     path('documents/', include('documents.urls')),
     path('chat/', include('chat.urls')),
     path('awareness/', include('awareness.urls')),
+    # rural_health_assistant/urls.py
+    path('appointments/', include('appointments.urls', namespace='appointments')),
+    
     path('', views.home, name='home'),
 
 

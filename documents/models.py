@@ -3,7 +3,7 @@ import os
 import uuid
 from django.db import models
 from django.conf import settings
-from accounts.models import User
+from accounts.models import Account as User
 
 # import rag helpers (relative import - adjust path as needed)
 from rag_components.vector_store_update import add_file_to_vector_db, delete_document_vectors_by_doc_id

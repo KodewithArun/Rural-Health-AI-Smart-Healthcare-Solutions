@@ -28,18 +28,18 @@
       {% csrf_token %}
       
       <div class="space-y-4">
-        <!-- Username or Email -->
+        <!-- Email -->
         <div>
-          <label for="identifier" class="block text-sm font-medium text-gray-700">
-            Username or Email
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Email
           </label>
           <input 
-            id="identifier" 
-            name="identifier" 
-            type="text" 
+            id="email" 
+            name="email" 
+            type="email" 
             required 
             class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Enter your username or email"
+            placeholder="Enter your email"
           >
         </div>
 

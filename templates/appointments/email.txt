@@ -1,0 +1,8 @@
+Appointment {% if appointment.status == 'pending' %}Created{% else %}Updated{% endif %}
+Date: {{ appointment.date }}
+Time: {{ appointment.time }}
+Reason: {{ appointment.reason }}
+Status: {{ appointment.status }}
+{% if appointment.note %}Notes: {{ appointment.note }}{% endif %}
+Thank you,
+Rural Health Assistant Team

@@ -14,7 +14,7 @@ from .models import ChatHistory
 from .forms import ChatForm
 # from rag_components.rag_chain import get_rag_response
 from rag_components.llm_and_rag import get_rag_response
-from accounts.models import User
+from accounts.models import Account as User
 
 
 @login_required

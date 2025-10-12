@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Appointments</h2>
+<table>
+    <tr>
+        <th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th>
+    </tr>
+    {% for appt in appointments %}
+    <tr>
+        <td>{{ appt.date }}</td>
+        <td>{{ appt.time }}</td>
+        <td>{{ appt.reason }}</td>
+        <td>{{ appt.status }}</td>
+        <td>
+            {% if user.role == 'villager' and appt.can_cancel %}
+            <a href="{% url 'appointments:cancel' appt.pk %}">Cancel</a>
+            {% endif %}
+            {% if user.role in 'health_worker admin' %}
+            <a href="{% url 'appointments:update' appt.pk %}">Update</a>
+            <a href="{% url 'appointments:delete' appt.pk %}">Delete</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,9 @@
+<h2>Appointment {% if appointment.status == 'pending' %}Created{% else %}Updated{% endif %}</h2>
+<p>Date: {{ appointment.date }}</p>
+<p>Time: {{ appointment.time }}</p>
+<p>Reason: {{ appointment.reason }}</p>
+<p>Status: {{ appointment.status }}</p>
+{% if appointment.note %}
+<p><strong>Notes:</strong> {{ appointment.note }}</p>
+{% endif %}
+<p>Thank you,<br>Rural Health Assistant Team</p>

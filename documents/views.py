@@ -7,7 +7,7 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from accounts.models import User
+from accounts.models import Account as User
 from .models import Document
 from .forms import DocumentUploadForm, DocumentUpdateForm
 # from rag_components.vector_store_update import update_vector_db
@@ -60,11 +60,11 @@ def upload_document(request):
             document.save()
             
             # Update vector database
-            try:
-                update_vector_db()
-                messages.success(request, 'Document uploaded successfully and vector database updated.')
-            except Exception as e:
-                messages.error(request, f'Document uploaded but vector database update failed: {str(e)}')
+            # try:
+            #     update_vector_db()
+            #     messages.success(request, 'Document uploaded successfully and vector database updated.')
+            # except Exception as e:
+            #     messages.error(request, f'Document uploaded but vector database update failed: {str(e)}')
             
             return redirect('documents:document_list')
     else:
@@ -83,11 +83,11 @@ def update_document(request, pk):
             form.save()
             
             # Update vector database
-            try:
-                update_vector_db()
-                messages.success(request, 'Document updated successfully and vector database updated.')
-            except Exception as e:
-                messages.error(request, f'Document updated but vector database update failed: {str(e)}')
+            # try:
+            #     update_vector_db()
+            #     messages.success(request, 'Document updated successfully and vector database updated.')
+            # except Exception as e:
+            #     messages.error(request, f'Document updated but vector database update failed: {str(e)}')
             
             return redirect('documents:document_list')
     else:
@@ -108,11 +108,11 @@ def delete_document(request, pk):
     document.delete()
     
     # Update vector database
-    try:
-        update_vector_db()
-        messages.success(request, 'Document deleted successfully and vector database updated.')
-    except Exception as e:
-        messages.error(request, f'Document deleted but vector database update failed: {str(e)}')
+    # try:
+    #     update_vector_db()
+    #     messages.success(request, 'Document deleted successfully and vector database updated.')
+    # except Exception as e:
+    #     messages.error(request, f'Document deleted but vector database update failed: {str(e)}')
     
     return redirect('documents:document_list')
 
