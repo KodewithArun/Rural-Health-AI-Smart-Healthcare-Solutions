@@ -14,6 +14,7 @@ urlpatterns = [
     path('awareness/', include('awareness.urls')),
     # rural_health_assistant/urls.py
     path('appointments/', include('appointments.urls', namespace='appointments')),
+    path('contact/', include('contact.urls', namespace='contact')),
     
     path('', views.home, name='home'),
 

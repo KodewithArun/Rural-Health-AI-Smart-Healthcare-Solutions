@@ -1,13 +1,13 @@
 # rag_components/llm_and_rag.py
 from django.conf import settings
-from langchain.prompts import PromptTemplate
-from langchain.chains import RetrievalQA
+from langchain_core.prompts import PromptTemplate
+# from langchain.chains import create_retrieval_chain
+# from langchain.chains.combine_documents import create_stuff_documents_chain
 # from langchain_groq import ChatGroq   
 from langchain_google_genai import ChatGoogleGenerativeAI
 from .vector_store_update import get_retriever, get_vector_store
-
-from langchain.prompts import PromptTemplate
-
+####################
+# Prompt Template
 def get_prompt_template():
     template = """
 You are a **Rural Health Assistant**. Your role is to provide **friendly, professional, and accurate health guidance**.
@@ -24,11 +24,11 @@ You are a **Rural Health Assistant**. Your role is to provide **friendly, profes
 {context}
 
 **User question:** 
-{question}
+{input}
 
 **Answer (use only the context):**
 """
-    return PromptTemplate(input_variables=["context", "question"], template=template)
+    return PromptTemplate(input_variables=["context", "input"], template=template)
 
 
 def get_llm():
@@ -51,38 +51,39 @@ def get_rag_response(question: str, k: int = None):
     # This function now delegates to the new agentic RAG.
     # The old implementation is preserved below for reference but is no longer used.
     return get_agentic_rag_response(question)
-    """
-    Returns {"answer": ..., "sources": [ {title, content, metadata}, ... ] }
-    """
-    try:
-        retriever = get_retriever(k=k)
-        llm = get_llm()
-        prompt = get_prompt_template()
+    
+    # # Old implementation preserved for reference (uses new chain methods)
+    # """
+    # Returns {"answer": ..., "sources": [ {title, content, metadata}, ... ] }
+    # """
+    # try:
+    #     retriever = get_retriever(k=k)
+    #     llm = get_llm()
+    #     prompt = get_prompt_template()
 
-        qa_chain = RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type="stuff",
-            retriever=retriever,
-            chain_type_kwargs={"prompt": prompt},
-            return_source_documents=True
-        )
+    #     # Create the document chain
+    #     document_chain = create_stuff_documents_chain(llm, prompt)
+        
+    #     # Create the retrieval chain
+    #     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
-        # Call chain and get both answer and source_documents
-        result = qa_chain.invoke({"query": question})
-        # result usually has keys 'result' and 'source_documents' depending on langchain version
-        answer = result.get("result") or result.get("output_text") or ""
-        raw_sources = result.get("source_documents", [])
+    #     # Call chain and get both answer and source documents
+    #     result = retrieval_chain.invoke({"input": question})
+        
+    #     # result has keys 'answer' and 'context' with the new chain
+    #     answer = result.get("answer", "")
+    #     raw_sources = result.get("context", [])
 
-        # Build clean sources list
-        sources = []
-        for doc in raw_sources:
-            sources.append({
-                "title": doc.metadata.get("source", "Unknown"),
-                "content": (doc.page_content[:200] + "...") if len(doc.page_content) > 200 else doc.page_content,
-                "metadata": doc.metadata
-            })
-        print(f"RAG answer: {answer} Sources: {sources}")
-        return {"answer": answer, "sources": sources}
-    except Exception as e:
-        print(f"RAG error: {e}")
-        return {"answer": "I don't have enough information to answer this question.", "sources": []}
+    #     # Build clean sources list
+    #     sources = []
+    #     for doc in raw_sources:
+    #         sources.append({
+    #             "title": doc.metadata.get("source", "Unknown"),
+    #             "content": (doc.page_content[:200] + "...") if len(doc.page_content) > 200 else doc.page_content,
+    #             "metadata": doc.metadata
+    #         })
+    #     print(f"RAG answer: {answer} Sources: {sources}")
+    #     return {"answer": answer, "sources": sources}
+    # except Exception as e:
+    #     print(f"RAG error: {e}")
+    #     return {"answer": "I don't have enough information to answer this question.", "sources": []}

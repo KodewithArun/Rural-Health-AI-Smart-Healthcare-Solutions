@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "documents",
     "awareness",
     "appointments",
+    "contact",
   
    
 ]

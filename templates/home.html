@@ -10,6 +10,46 @@
     <!-- Swiper Container -->
     <div class="swiper heroSwiper">
       <div class="swiper-wrapper">
+
+            <!-- Slide 3: Emergency Support -->
+        <div class="swiper-slide">
+          <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
+            <!-- Left Content -->
+            <div class="space-y-8 order-2 lg:order-1">
+              <div class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                Emergency Ready
+              </div>
+              
+              <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                24/7 Emergency
+                <span class="text-red-600 block">Support</span>
+              </h1>
+              
+              <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                When every second counts, get immediate guidance for emergency situations. Critical first-aid instructions and emergency protocols at your fingertips.
+              </p>
+              
+              <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
+                Emergency Information 
+                <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">⚡</span>
+              </button>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="relative order-1 lg:order-2">
+              <div class="relative overflow-hidden rounded-2xl shadow-2xl ">
+                <img src="https://imgs.search.brave.com/4xbv03CYgGTE0LrmzT1CRMrCFsg3Hfu8J-1ZLjllkLo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ub3J2/aWNob3NwaXRhbC5j/b20vYXNzZXRzL2lt/Zy9vdXItc2Vydmlj/ZXMvb3VyLXNlcnZp/Y2VzLTY4NjI4MmMz/Yjk3NDJFbWVyZ2Vu/Y3ktMTAyNHgxMDI0/LnBuZw"
+                     alt="Emergency Healthcare Support" 
+                     class="w-full h-[500px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-red-600/20 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <p class="text-sm font-medium text-gray-800">Emergency Care</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <!-- Slide 1: AI Healthcare -->
         <div class="swiper-slide">
@@ -91,45 +131,7 @@
           </div>
         </div>
 
-        <!-- Slide 3: Emergency Support -->
-        <div class="swiper-slide">
-          <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
-            <!-- Left Content -->
-            <div class="space-y-8 order-2 lg:order-1">
-              <div class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-medium">
-                <span class="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                Emergency Ready
-              </div>
-              
-              <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                24/7 Emergency
-                <span class="text-red-600 block">Support</span>
-              </h1>
-              
-              <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
-                When every second counts, get immediate guidance for emergency situations. Critical first-aid instructions and emergency protocols at your fingertips.
-              </p>
-              
-              <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
-                Emergency Information 
-                <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">⚡</span>
-              </button>
-            </div>
-            
-            <!-- Right Image -->
-            <div class="relative order-1 lg:order-2">
-              <div class="relative overflow-hidden rounded-2xl shadow-2xl ">
-                <img src="https://imgs.search.brave.com/4xbv03CYgGTE0LrmzT1CRMrCFsg3Hfu8J-1ZLjllkLo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ub3J2/aWNob3NwaXRhbC5j/b20vYXNzZXRzL2lt/Zy9vdXItc2Vydmlj/ZXMvb3VyLXNlcnZp/Y2VzLTY4NjI4MmMz/Yjk3NDJFbWVyZ2Vu/Y3ktMTAyNHgxMDI0/LnBuZw"
-                     alt="Emergency Healthcare Support" 
-                     class="w-full h-[500px] object-cover">
-                <div class="absolute inset-0 bg-gradient-to-tr from-red-600/20 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2">
-                  <p class="text-sm font-medium text-gray-800">Emergency Care</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    
 
       </div>
       
@@ -593,43 +595,64 @@
             <!-- Contact Form -->
             <div class="bg-gray-50 p-8 rounded-2xl">
                 <h3 class="text-xl font-semibold text-blue-600 mb-6">Send us a message</h3>
-                <form class="space-y-6">
+                
+                <!-- Messages -->
+                {% if messages %}
+                    <div class="mb-4 space-y-2">
+                        {% for message in messages %}
+                            <div class="{% if message.tags == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-700{% else %}bg-red-50 border-l-4 border-red-500 text-red-700{% endif %} p-4 rounded-lg">
+                                <p class="flex items-center">
+                                    <i class="{% if message.tags == 'success' %}ri-checkbox-circle-line{% else %}ri-error-warning-line{% endif %} text-xl mr-2"></i>
+                                    {{ message }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <form method="POST" action="#contact" class="space-y-6">
+                    {% csrf_token %}
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                            <input type="text"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Enter your first name">
+                            {{ contact_form.first_name }}
+                            {% if contact_form.first_name.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ contact_form.first_name.errors.0 }}</p>
+                            {% endif %}
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                            <input type="text"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Enter your last name">
+                            {{ contact_form.last_name }}
+                            {% if contact_form.last_name.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ contact_form.last_name.errors.0 }}</p>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter your email address">
+                        {{ contact_form.email }}
+                        {% if contact_form.email.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ contact_form.email.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        <input type="tel"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter your phone number">
+                        {{ contact_form.phone }}
+                        {% if contact_form.phone.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ contact_form.phone.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
                     
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                        <textarea rows="4"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Tell us how we can help you..."></textarea>
+                        {{ contact_form.message }}
+                        {% if contact_form.message.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ contact_form.message.errors.0 }}</p>
+                        {% endif %}
                     </div>
 
 

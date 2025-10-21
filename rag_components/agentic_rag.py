@@ -4,7 +4,7 @@ from typing import List, TypedDict
 from django.conf import settings
 from langchain_core.documents import Document
 from langchain_core.runnables import Runnable, RunnableConfig
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import SerpAPIWrapper
 from langgraph.graph import StateGraph, END
 from .llm_and_rag import get_llm, get_retriever
@@ -36,7 +36,7 @@ You are a question classifier. Your task is to determine the category of the use
 The categories are: "greeting", "health", or "off_topic".
 
 - "greeting": For simple hellos, goodbyes, or salutations.
-- "health": For any question related to medicine, health conditions, treatments, wellness, symptoms, etc.
+- "health": For any question related to health, medical advice, symptoms, treatments, wellness, or rural health topics so that the Rural Health Assistant can provide relevant information based on its knowledge base.
 - "off_topic": For any question that is not a greeting and not related to health.
 
 User Question:
@@ -47,23 +47,28 @@ Category:
 """
 
 RAG_PROMPT_TEMPLATE = """
-You are a Rural Health Assistant, a friendly and professional AI.
-Your task is to answer health-related questions based ONLY on the context provided.
-Do not use any external knowledge or make assumptions.
+You are the Rural Health Assistant.
+Answer the user's health-related question using only the information in the Context below. Do not add outside knowledge or make assumptions.
 
-**Instructions:**
-1.  If the context contains the answer, provide a clear, concise, and simple answer.
-2.  If the context does NOT contain the answer, you MUST respond with EXACTLY this phrase: "I don't have enough information to answer this question."
-3.  When appropriate, gently recommend consulting a qualified healthcare professional for personal medical advice.
-4.  Highlight key actions or terms in **bold**.
+Decision rule:
+- If the Context clearly answers the question, give a short, direct answer.
+- If the Context is missing, ambiguous, or contradictory, respond exactly: I don't have enough information to answer this question.
 
-**Context:**
+Output rules:
+- Start with a concise answer (1–3 sentences).
+- Use plain language; define medical terms only if essential.
+- Prefer brief bullet points for steps or options.
+- Include a small Markdown table only if it clearly improves readability.
+- Do not mention the context, documents, or sources in the answer.
+- Do not fabricate any facts.
+
+Context (may include multiple documents; use only their content):
 {context}
 
-**User Question:**
+User question:
 {question}
 
-**Answer:**
+Answer:
 """
 
 IMPROVED_FALLBACK_PROMPT_TEMPLATE = """

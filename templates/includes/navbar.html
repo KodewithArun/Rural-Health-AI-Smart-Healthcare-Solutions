@@ -24,7 +24,7 @@
                     </div>
                 </a>
 
-                <a href="#chat"
+                <a href="{% url 'home' %}#chat"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-chat-3-line text-lg"></i>
                     <span>
@@ -35,7 +35,7 @@
                     </div>
                 </a>
 
-                <a href="#awareness"
+                <a href="{% url 'home' %}#awareness"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-information-line text-lg"></i>
                     <span>Health Awareness</span>
@@ -44,7 +44,7 @@
                     </div>
                 </a>
 
-                <a href="#services"
+                <a href="{% url 'home' %}#services"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-stethoscope-line text-lg"></i>
                     <span>Services</span>
@@ -53,7 +53,7 @@
                     </div>
                 </a>
 
-                <a href="#contact"
+                <a href="{% url 'home' %}#contact"
                     class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
                     <i class="ri-phone-line text-lg"></i>
                     <span>Contact</span>
@@ -62,14 +62,28 @@
                     </div>
                 </a>
 
-                <a href="{% url 'appointments:create' %}"
-                    class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
-                    <i class="ri-calendar-line text-lg"></i>
-                    <span>Book Appointment</span>
-                    <div
-                        class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
-                    </div>
-                </a>
+                {% if user.is_authenticated %}
+                    {% if user.is_villager %}
+                        <a href="{% url 'appointments:create' %}"
+                            class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
+                            <i class="ri-calendar-line text-lg"></i>
+                            <span>Book Appointment</span>
+                            <div
+                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
+                            </div>
+                        </a>
+                    {% elif user.is_health_worker %}
+                    
+                        <a href="{% url 'accounts:health_worker_dashboard' %}"
+                            class="nav-link text-gray-700 hover:text-blue-600 font-medium py-2 px-1 flex items-center gap-2 transition-all duration-300 relative group">
+                            <i class="ri-dashboard-line text-lg"></i>
+                            <span>Dashboard</span>
+                            <div
+                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-full">
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endif %}
             </div>
 
             <!-- Action Buttons --><!-- Action Buttons -->
@@ -86,13 +100,23 @@
 
                     <!-- Dropdown Menu (hidden by default, show on hover using group) -->
                     <div
-                        class="absolute right-0 mt-2 w-32 rounded-lg shadow-lg bg-gray-50 ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200">
+                        class="absolute right-0 mt-2 w-42 rounded-lg shadow-lg bg-gray-50 ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200">
                         <div class="py-1">
-                            <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile
+                            <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile
                             </a>
+
+                            <a href="{% url 'appointments:list' %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Appointments
+                            </a>
+                            
+                            <a href="{% url 'contact:my_enquiries' %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Enquiries
+                            </a>
+
                             <a href="{% url 'chat:chat_history' %}"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Chat History
                             </a>
+
 
                             <form method="POST" action="{% url 'accounts:logout' %}">
                                 {% csrf_token %}
@@ -137,31 +161,42 @@
                 <i class="ri-chat-3-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">AI Chat</span>
             </a>
-            <a href="#services"
+            <a href="{% url 'home' %}#services"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-stethoscope-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Services</span>
             </a>
-            <a href="#awareness"
+            <a href="{% url 'home' %}#awareness"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-information-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Health Awareness</span>
             </a>
-            <a href="#contact"
+            <a href="{% url 'home' %}#contact"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
                 <i class="ri-phone-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
                 <span class="font-medium">Contact</span>
             </a>
             <!-- appointment -->
-            <a href="{% url 'appointments:create' %}"
-                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
-                <i class="ri-calendar-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
-                <span class="font-medium">Book Appointment</span>
-            </a>
+            {% if user.is_authenticated %}
+                {% if user.is_villager %}
+
+                    <a href="{% url 'appointments:create' %}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
+                        <i class="ri-calendar-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
+                        <span class="font-medium">Book Appointments</span>
+                    </a>
+                {% elif user.is_health_worker %}
+                    <a href="{% url 'accounts:health_worker_dashboard' %}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 group">
+                        <i class="ri-dashboard-line text-lg group-hover:scale-110 transition-transform duration-300"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+                {% endif %}
+            {% endif %}
 
             {% if user.is_authenticated %}
             <div class="pt-3 border-t border-gray-200">
-                <a href=""
+                <a href="{% url 'accounts:profile' %}"
                     class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
                     <i class="ri-user-line"></i>
                     <span>Profile</span>
@@ -171,6 +206,22 @@
                     <i class="ri-history-line"></i>
                     <span>Chat History</span>
                 </a>
+
+                <!-- appointment list -->
+                <a href="{% url 'appointments:list' %}"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                    <i class="ri-calendar-line"></i>
+                    <span>My Appointments</span>
+                </a>
+
+                <!-- enquiries list -->
+                <a href="{% url 'contact:my_enquiries' %}"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                    <i class="ri-mail-line"></i>
+                    <span>My Enquiries</span>
+                </a>
+
+
                 <form method="POST" action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
                     <button type="submit"

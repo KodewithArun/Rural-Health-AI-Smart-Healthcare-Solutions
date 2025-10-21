@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from .models import Account as User, HealthWorkerProfile
 
 
@@ -58,3 +58,52 @@ class HealthWorkerCreationForm(UserCreationForm):
                 availability=self.cleaned_data.get('availability', True)
             )
         return user
+
+
+class UserProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email', 'phone_number')
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+        }
+
+
+class HealthWorkerProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = HealthWorkerProfile
+        fields = ('specialization', 'qualification', 'experience_years', 'availability')
+        widgets = {
+            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Specialization'}),
+            'qualification': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Qualification'}),
+            'experience_years': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Years of Experience'}),
+            'availability': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label="Current Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your current password'
+        })
+    )
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter new password'
+        })
+    )
+    new_password2 = forms.CharField(
+        label="Confirm New Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm new password'
+        })
+    )

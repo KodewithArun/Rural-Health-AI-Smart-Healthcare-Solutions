@@ -1,26 +1,344 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Appointments - Rural Health AI{% endblock %}
+
 {% block content %}
-<h2>Appointments</h2>
-<table>
-    <tr>
-        <th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th>
-    </tr>
-    {% for appt in appointments %}
-    <tr>
-        <td>{{ appt.date }}</td>
-        <td>{{ appt.time }}</td>
-        <td>{{ appt.reason }}</td>
-        <td>{{ appt.status }}</td>
-        <td>
-            {% if user.role == 'villager' and appt.can_cancel %}
-            <a href="{% url 'appointments:cancel' appt.pk %}">Cancel</a>
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                        {% if user.is_villager %}
+                            My Appointments
+                        {% elif user.is_health_worker %}
+                            Patient Appointments
+                        {% else %}
+                            All Appointments
+                        {% endif %}
+                    </h1>
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <i class="ri-calendar-check-line text-blue-600 mr-2"></i>
+                        Manage and track your appointments
+                    </p>
+                </div>
+                {% if user.is_villager %}
+                <div class="mt-4 sm:mt-0">
+                    <a href="{% url 'appointments:create' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm">
+                        <i class="ri-add-line mr-2"></i>
+                        Book New Appointment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Stats Cards (for health workers) -->
+        {% if user.is_health_worker %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Total</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_count }}</p>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-2">
+                        <i class="ri-calendar-line text-xl text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Pending</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ pending_count }}</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-2">
+                        <i class="ri-time-line text-xl text-amber-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Upcoming</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ upcoming_count }}</p>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-2">
+                        <i class="ri-calendar-check-line text-xl text-emerald-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Completed</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ completed_count }}</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-2">
+                        <i class="ri-checkbox-circle-line text-xl text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Stats Cards for Villagers -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-blue-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-calendar-line text-lg text-blue-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Total</p>
+                    <p class="text-xl font-bold text-gray-900">{{ total_count }}</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-amber-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-time-line text-lg text-amber-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Pending</p>
+                    <p class="text-xl font-bold text-gray-900">{{ pending_count }}</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-emerald-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-calendar-check-line text-lg text-emerald-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Upcoming</p>
+                    <p class="text-xl font-bold text-gray-900">{{ upcoming_count }}</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-green-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-check-double-line text-lg text-green-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Approved</p>
+                    <p class="text-xl font-bold text-gray-900">{{ approved_count }}</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-purple-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-checkbox-circle-line text-lg text-purple-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Completed</p>
+                    <p class="text-xl font-bold text-gray-900">{{ completed_count }}</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+                <div class="text-center">
+                    <div class="bg-red-50 rounded-lg p-2 inline-flex mb-2">
+                        <i class="ri-close-circle-line text-lg text-red-600"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 uppercase mb-1">Cancelled</p>
+                    <p class="text-xl font-bold text-gray-900">{{ cancelled_count }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Appointments List -->
+        {% if appointments %}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Desktop View -->
+            <div class="hidden md:block overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-calendar-line mr-1"></i> Date & Time
+                            </th>
+                            {% if user.is_health_worker %}
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-user-line mr-1"></i> Patient
+                            </th>
+                            {% else %}
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-stethoscope-line mr-1"></i> Health Worker
+                            </th>
+                            {% endif %}
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-file-text-line mr-1"></i> Reason
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-information-line mr-1"></i> Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <i class="ri-settings-line mr-1"></i> Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for appt in appointments %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-50 rounded-lg p-2 mr-3">
+                                        <i class="ri-calendar-event-line text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">{{ appt.date|date:"M d, Y" }}</div>
+                                        <div class="text-xs text-gray-500">{{ appt.time|time:"h:i A" }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="bg-purple-50 rounded-full p-2 mr-3">
+                                        <i class="ri-user-line text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        {% if user.is_health_worker %}
+                                            <div class="text-sm font-medium text-gray-900">{{ appt.villager.first_name }} {{ appt.villager.last_name }}</div>
+                                            <div class="text-xs text-gray-500">{{ appt.villager.email }}</div>
+                                        {% else %}
+                                            <div class="text-sm font-medium text-gray-900">Dr. {{ appt.healthworker.first_name }} {{ appt.healthworker.last_name }}</div>
+                                            {% if appt.healthworker.health_profile %}
+                                                <div class="text-xs text-gray-500">{{ appt.healthworker.health_profile.specialization }}</div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900">{{ appt.reason|truncatewords:10 }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border
+                                    {% if appt.status == 'pending' %}bg-amber-50 text-amber-700 border-amber-200
+                                    {% elif appt.status == 'approved' %}bg-emerald-50 text-emerald-700 border-emerald-200
+                                    {% elif appt.status == 'completed' %}bg-blue-50 text-blue-700 border-blue-200
+                                    {% else %}bg-red-50 text-red-700 border-red-200{% endif %}">
+                                    <span class="w-1.5 h-1.5 rounded-full mr-1.5
+                                        {% if appt.status == 'pending' %}bg-amber-500
+                                        {% elif appt.status == 'approved' %}bg-emerald-500
+                                        {% elif appt.status == 'completed' %}bg-blue-500
+                                        {% else %}bg-red-500{% endif %}"></span>
+                                    {{ appt.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a href="{% url 'appointments:detail' appt.pk %}" 
+                                       class="inline-flex items-center px-2.5 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-md transition-colors text-xs font-medium">
+                                        <i class="ri-eye-line mr-1"></i> View
+                                    </a>
+                                    {% if user.role == 'villager' and appt.can_cancel %}
+                                        <a href="{% url 'appointments:cancel' appt.pk %}" 
+                                           class="inline-flex items-center px-2.5 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-md transition-colors text-xs font-medium">
+                                            <i class="ri-close-line mr-1"></i> Cancel
+                                        </a>
+                                    {% endif %}
+                                    {% if user.role in 'health_worker admin' %}
+                                        <a href="{% url 'appointments:update' appt.pk %}" 
+                                           class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-md transition-colors text-xs font-medium">
+                                            <i class="ri-edit-line mr-1"></i> Update
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="md:hidden divide-y divide-gray-200">
+                {% for appt in appointments %}
+                <div class="p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="bg-blue-50 rounded-lg p-2 mr-3">
+                                <i class="ri-calendar-event-line text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">{{ appt.date|date:"M d, Y" }}</div>
+                                <div class="text-xs text-gray-500">{{ appt.time|time:"h:i A" }}</div>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border
+                            {% if appt.status == 'pending' %}bg-amber-50 text-amber-700 border-amber-200
+                            {% elif appt.status == 'approved' %}bg-emerald-50 text-emerald-700 border-emerald-200
+                            {% elif appt.status == 'completed' %}bg-blue-50 text-blue-700 border-blue-200
+                            {% else %}bg-red-50 text-red-700 border-red-200{% endif %}">
+                            {{ appt.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">
+                            {% if user.is_health_worker %}Patient{% else %}Health Worker{% endif %}
+                        </p>
+                        <div class="flex items-center">
+                            <i class="ri-user-line text-purple-600 mr-2"></i>
+                            <span class="text-sm font-medium text-gray-900">
+                                {% if user.is_health_worker %}
+                                    {{ appt.villager.first_name }} {{ appt.villager.last_name }}
+                                {% else %}
+                                    Dr. {{ appt.healthworker.first_name }} {{ appt.healthworker.last_name }}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">Reason</p>
+                        <p class="text-sm text-gray-700">{{ appt.reason|truncatewords:15 }}</p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{% url 'appointments:detail' appt.pk %}" 
+                           class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-colors text-xs font-medium">
+                            <i class="ri-eye-line mr-1"></i> View
+                        </a>
+                        {% if user.role == 'villager' and appt.can_cancel %}
+                            <a href="{% url 'appointments:cancel' appt.pk %}" 
+                               class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-lg transition-colors text-xs font-medium">
+                                <i class="ri-close-line mr-1"></i> Cancel
+                            </a>
+                        {% endif %}
+                        {% if user.role in 'health_worker admin' %}
+                            <a href="{% url 'appointments:update' appt.pk %}" 
+                               class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors text-xs font-medium">
+                                <i class="ri-edit-line mr-1"></i> Update
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <i class="ri-calendar-line text-4xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No appointments found</h3>
+            <p class="text-sm text-gray-600 mb-6">
+                {% if user.is_villager %}
+                    You haven't booked any appointments yet.
+                {% else %}
+                    No appointments to display at this time.
+                {% endif %}
+            </p>
+            {% if user.is_villager %}
+            <a href="{% url 'appointments:create' %}" 
+               class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                <i class="ri-add-line mr-2"></i>
+                Book Your First Appointment
+            </a>
             {% endif %}
-            {% if user.role in 'health_worker admin' %}
-            <a href="{% url 'appointments:update' appt.pk %}">Update</a>
-            <a href="{% url 'appointments:delete' appt.pk %}">Delete</a>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

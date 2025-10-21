@@ -38,7 +38,52 @@ def appointment_list(request):
     else:
         return HttpResponseForbidden()
     
-    return render(request, 'appointments/appointment_list.html', {'appointments': appointments})
+    # Calculate statistics
+    today = timezone.now().date()
+    total_count = appointments.count()
+    pending_count = appointments.filter(status='pending').count()
+    approved_count = appointments.filter(status='approved').count()
+    completed_count = appointments.filter(status='completed').count()
+    cancelled_count = appointments.filter(status='cancelled').count()
+    
+    # Upcoming appointments (future dates with pending or approved status)
+    upcoming_count = appointments.filter(
+        date__gte=today,
+        status__in=['pending', 'approved']
+    ).count()
+    
+    context = {
+        'appointments': appointments,
+        'total_count': total_count,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'completed_count': completed_count,
+        'cancelled_count': cancelled_count,
+        'upcoming_count': upcoming_count,
+    }
+    
+    return render(request, 'appointments/appointment_list.html', context)
+
+
+# View appointment details
+@login_required
+def appointment_detail(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+    
+    # Check if user has permission to view this appointment
+    if not can_access_appointment(request.user, appointment):
+        return HttpResponseForbidden("You don't have permission to view this appointment.")
+    
+    # For villagers, check if they can cancel
+    can_cancel = False
+    if is_villager(request.user):
+        can_cancel = can_villager_cancel(appointment)
+    
+    context = {
+        'appointment': appointment,
+        'can_cancel': can_cancel,
+    }
+    return render(request, 'appointments/appointment_detail.html', context)
 
 # Create appointment
 @login_required
