@@ -1,3 +1,5 @@
+# from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.contrib import admin
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
@@ -6,7 +8,7 @@ from django.conf import settings
 from .models import Awareness
 
 @admin.register(Awareness)
-class AwarenessAdmin(admin.ModelAdmin):
+class AwarenessAdmin(ModelAdmin):
     list_display = ('title', 'get_date_display', 'created_at', 'is_event')
     list_filter = ('is_event', 'event_date')
     search_fields = ('title', 'description')

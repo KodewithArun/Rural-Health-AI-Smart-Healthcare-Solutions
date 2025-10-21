@@ -1,10 +1,12 @@
+# from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.contrib import admin
 from .models import ContactEnquiry
 from .utils import send_response_to_user
 
 
 @admin.register(ContactEnquiry)
-class ContactEnquiryAdmin(admin.ModelAdmin):
+class ContactEnquiryAdmin(ModelAdmin):
     list_display = ('first_name', 'last_name', 'email', 'phone', 'status', 'created_at')
     list_filter = ('status', 'created_at', 'updated_at')
     search_fields = ('first_name', 'last_name', 'email', 'phone', 'message')

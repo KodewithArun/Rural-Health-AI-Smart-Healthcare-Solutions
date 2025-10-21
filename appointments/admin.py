@@ -1,8 +1,10 @@
+# from django.contrib import admin
+from unfold.admin import ModelAdmin
 from django.contrib import admin
 from .models import Appointment
 
 @admin.register(Appointment)
-class AppointmentAdmin(admin.ModelAdmin):
+class AppointmentAdmin(ModelAdmin):
     list_display = (
         'villager', 'healthworker', 'date', 'time', 
         'status', 'token', 'created_at'

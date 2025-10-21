@@ -17,7 +17,10 @@ class AppointmentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['healthworker'].queryset = \
-                self.fields['healthworker'].queryset.filter(role='health_worker')
+                self.fields['healthworker'].queryset.filter(
+                    role='health_worker',
+                    health_profile__availability=True
+                )
         self.fields['date'].widget.attrs['min'] = date.today().isoformat()
 
     def clean_date(self):

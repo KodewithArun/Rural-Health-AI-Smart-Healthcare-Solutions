@@ -32,6 +32,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "unfold",  # must be first
+    "unfold.contrib.filters",         # optional
+    "unfold.contrib.forms",           # optional
+    "unfold.contrib.inlines",         # optional
+    "unfold.contrib.import_export",   # optional (if using django-import-export)
+    "unfold.contrib.guardian",        # optional (if using django-guardian)
+    "unfold.contrib.simple_history",  # optional (if using django-simple-history)
+    "unfold.contrib.location_field",  # optional
+    "unfold.contrib.constance",       # optional
+    
+    
+    
     "django.contrib.admin",  # required
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -197,3 +209,25 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# unfold settings
+
+UNFOLD = {
+    "SITE_HEADER": "Rural Health AI Support System",
+    "SITE_TITLE": "Health Admin",
+    "SITE_INDEX_TITLE": "Welcome to the Rural Health AI Support System",
+    "SITE_URL": "/",
+    "THEME": {
+        "color": "blue",  # available: blue, indigo, teal, emerald, etc.
+        "dark_mode": True,
+    },
+    
+    # dont show this Authentication and Authorization models in admin
+    "HIDE_MODELS": [
+        "auth.User",
+        "auth.Group",
+    ],
+    
+    "LIST_PER_PAGE": 25,
+}

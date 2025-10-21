@@ -1,24 +1,235 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-lg mx-auto bg-white shadow-md rounded-md p-6 mt-6">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">Book Appointment</h2>
-    <form method="post" class="space-y-4">
-        {% csrf_token %}
-        {% for field in form %}
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                    <p class="text-sm text-gray-400">{{ field.help_text }}</p>
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Header Section -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-semibold text-blue-600 mb-2">Book Appointment</h1>
+            <p class="text-gray-600">Please fill in the details to schedule your appointment</p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+            <!-- Form Content -->
+            <form method="post" class="p-6" id="appointmentForm">
+                {% csrf_token %}
+                
+                <!-- Non-field Errors -->
+                {% if form.non_field_errors %}
+                    <div class="mb-6 bg-red-50 border border-red-200 p-4 rounded">
+                        <div class="flex items-start">
+                            <i class="ri-error-warning-line text-red-600 text-lg mt-0.5 mr-2"></i>
+                            <div class="flex-1">
+                                {% for error in form.non_field_errors %}
+                                    <p class="text-red-800 text-sm">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
-                {% for error in field.errors %}
-                    <p class="text-red-500 text-sm">{{ error }}</p>
-                {% endfor %}
+
+                <div class="space-y-6">
+                    <!-- Date Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.date.label }}
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div>
+                            {{ form.date }}
+                            <style>
+                                #id_date {
+                                    width: 100%;
+                                    padding: 0.625rem 0.75rem;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 0.375rem;
+                                    font-size: 0.875rem;
+                                    transition: border-color 0.15s ease;
+                                    background-color: white;
+                                }
+                                #id_date:focus {
+                                    outline: none;
+                                    border-color: #2563eb;
+                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                                }
+                            </style>
+                        </div>
+                        {% if form.date.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.date.help_text }}</p>
+                        {% endif %}
+                        {% if form.date.errors %}
+                            <div class="mt-1">
+                                {% for error in form.date.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Time Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.time.label }}
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div>
+                            {{ form.time }}
+                            <style>
+                                #id_time {
+                                    width: 100%;
+                                    padding: 0.625rem 0.75rem;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 0.375rem;
+                                    font-size: 0.875rem;
+                                    transition: border-color 0.15s ease;
+                                    background-color: white;
+                                }
+                                #id_time:focus {
+                                    outline: none;
+                                    border-color: #2563eb;
+                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                                }
+                            </style>
+                        </div>
+                        {% if form.time.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.time.help_text }}</p>
+                        {% endif %}
+                        {% if form.time.errors %}
+                            <div class="mt-1">
+                                {% for error in form.time.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Health Worker Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.healthworker.label }}
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div>
+                            {{ form.healthworker }}
+                            <style>
+                                #id_healthworker {
+                                    width: 100%;
+                                    padding: 0.625rem 0.75rem;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 0.375rem;
+                                    font-size: 0.875rem;
+                                    transition: border-color 0.15s ease;
+                                    background-color: white;
+                                    cursor: pointer;
+                                }
+                                #id_healthworker:focus {
+                                    outline: none;
+                                    border-color: #2563eb;
+                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                                }
+                            </style>
+                        </div>
+                        {% if form.healthworker.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.healthworker.help_text }}</p>
+                        {% endif %}
+                        {% if form.healthworker.errors %}
+                            <div class="mt-1">
+                                {% for error in form.healthworker.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Reason Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.reason.label }}
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div>
+                            {{ form.reason }}
+                            <style>
+                                #id_reason {
+                                    width: 100%;
+                                    padding: 0.625rem 0.75rem;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 0.375rem;
+                                    font-size: 0.875rem;
+                                    transition: border-color 0.15s ease;
+                                    background-color: white;
+                                    min-height: 100px;
+                                    resize: vertical;
+                                    font-family: inherit;
+                                }
+                                #id_reason:focus {
+                                    outline: none;
+                                    border-color: #2563eb;
+                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                                }
+                            </style>
+                        </div>
+                        {% if form.reason.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.reason.help_text }}</p>
+                        {% endif %}
+                        {% if form.reason.errors %}
+                            <div class="mt-1">
+                                {% for error in form.reason.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="mt-6 bg-blue-50 border border-blue-200 p-4 rounded">
+                    <p class="text-sm font-medium text-gray-900 mb-2">Important Information</p>
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        <li>• Appointments must be booked at least 1 hour in advance</li>
+                        <li>• Cancellations are allowed up to 24 hours before the scheduled time</li>
+                        <li>• A confirmation email will be sent after booking</li>
+                    </ul>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex gap-3">
+                    <button type="submit" class="flex-1 bg-blue-600 text-white font-medium py-2.5 px-4 rounded hover:bg-blue-700 transition-colors text-sm">
+                        Book Appointment
+                    </button>
+                    <a href="{% url 'appointments:list' %}" class="bg-white text-gray-700 font-medium py-2.5 px-4 rounded border border-gray-300 hover:bg-gray-50 transition-colors text-sm">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help Section -->
+        <div class="mt-6 text-center text-sm text-gray-600">
+            <p class="mb-2">Need assistance?</p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="{% url 'chat:index' %}" class="text-blue-600 hover:text-blue-700">Chat with AI Assistant</a>
+                <span class="text-gray-400">|</span>
+                <a href="{% url 'home' %}#contact" class="text-blue-600 hover:text-blue-700">Contact Support</a>
             </div>
-        {% endfor %}
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition">
-            Book Appointment
-        </button>
-    </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('appointmentForm');
+        
+        const firstError = document.querySelector('.text-red-600');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+        });
+    });
+</script>
 {% endblock %}
