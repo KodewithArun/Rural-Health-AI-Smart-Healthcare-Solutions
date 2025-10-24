@@ -27,3 +27,13 @@ class DocumentAdmin(ModelAdmin):
         if not obj.uploaded_by_id:
             obj.uploaded_by = request.user
         obj.save()
+
+    def delete_model(self, request, obj):
+        """Override to ensure model's delete() is called (triggers vector cleanup)."""
+        obj.delete()  # This calls the model's delete() method with vector cleanup
+
+    def delete_queryset(self, request, queryset):
+        """Override bulk delete to call delete() on each object individually."""
+        # Don't use queryset.delete() - it bypasses model delete()
+        for obj in queryset:
+            obj.delete()  # Calls model's delete() for each, triggering vector cleanup

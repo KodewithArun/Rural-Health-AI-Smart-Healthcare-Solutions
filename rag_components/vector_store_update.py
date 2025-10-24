@@ -55,11 +55,31 @@ def get_embeddings():
 def get_vector_db_path():
     return _get_config("VECTOR_DB_PATH", os.path.join(settings.BASE_DIR, "vector_db"))
 
+# Cache management
+_vector_store_cache = None
+
 def get_vector_store():
+    """
+    Get vector store instance. Uses caching but respects cache clears after deletions.
+    """
+    global _vector_store_cache
+    
+    # If cache exists, return it
+    if _vector_store_cache is not None:
+        return _vector_store_cache
+    
+    # Otherwise create new instance
     path = get_vector_db_path()
     os.makedirs(path, exist_ok=True)
     embeddings = get_embeddings()
-    return Chroma(persist_directory=path, embedding_function=embeddings)
+    _vector_store_cache = Chroma(persist_directory=path, embedding_function=embeddings)
+    return _vector_store_cache
+
+def _clear_vector_store_cache():
+    """Clear the cached vector store to force fresh connection."""
+    global _vector_store_cache
+    _vector_store_cache = None
+    print("Vector store cache cleared")
 
 ####################
 # Incremental ops
@@ -84,25 +104,45 @@ def add_file_to_vector_db(file_path: str, doc_id: str, source_name: str = None):
 
     # add_documents will compute embeddings for only these chunks
     vector_store.add_documents(chunks)
-    vector_store.persist()
+    # ChromaDB auto-persists in newer versions, no need for .persist()
     return vector_store
 
 def delete_document_vectors_by_doc_id(doc_id: str):
     """
     Delete all vectors whose metadata.doc_id == doc_id.
-    Chroma's delete interface accepts metadata filters or ids depending on version;
-    we'll try to use metadata-based deletion if available.
+    Uses ChromaDB's where clause to filter by metadata.
+    Forces a fresh reload of the collection to avoid caching issues.
     """
     vector_store = get_vector_store()
-    # Chroma .delete supports ids or filters; using filter on metadata:
+    
+    # Get the underlying Chroma collection
+    collection = vector_store._collection
+    
+    # Query for all document IDs with matching doc_id metadata
     try:
-        # Some Chroma bindings allow: delete(ids=...), some: delete(filter={"doc_id": doc_id})
-        vector_store.delete(filter={"doc_id": doc_id})
-    except TypeError:
-        # fallback: try delete(ids=[...]) if we have stored ids elsewhere (not implemented)
-        # If your Chroma version doesn't support filter delete, consider upgrading or storing chunk IDs on ingestion.
+        # ChromaDB uses 'where' parameter for metadata filtering
+        results = collection.get(
+            where={"doc_id": doc_id}
+        )
+        
+        # Extract the IDs to delete
+        ids_to_delete = results.get('ids', [])
+        
+        if ids_to_delete:
+            # Delete by IDs
+            collection.delete(ids=ids_to_delete)
+            print(f"Deleted {len(ids_to_delete)} chunks for doc_id: {doc_id}")
+            
+            # CRITICAL: Clear any module-level caches by getting a fresh instance
+            # This ensures subsequent retrievals don't use stale cached data
+            _clear_vector_store_cache()
+        else:
+            print(f"No chunks found for doc_id: {doc_id}")
+            
+    except Exception as e:
+        print(f"Error deleting vectors for doc_id {doc_id}: {e}")
         raise
-    vector_store.persist()
+    
     return vector_store
 
 ####################

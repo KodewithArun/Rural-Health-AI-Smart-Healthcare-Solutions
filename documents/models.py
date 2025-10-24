@@ -26,15 +26,25 @@ class Document(models.Model):
     def save(self, *args, **kwargs):
         # If new file upload or file changed, we'll add/replace in vector DB after saving
         is_new = self.pk is None
-        old_path = None
+        file_changed = False
+        
         if not is_new:
             try:
                 old = Document.objects.get(pk=self.pk)
-                old_path = old.file.path if old.file and old.file.name != self.file.name else None
+                if old.file and old.file.name != self.file.name:
+                    file_changed = True
             except Document.DoesNotExist:
-                old_path = None
+                pass
 
         super().save(*args, **kwargs)
+
+        # If file was replaced, delete old vectors first
+        if file_changed:
+            try:
+                delete_document_vectors_by_doc_id(str(self.pk))
+                print(f"Deleted old vectors for updated doc {self.pk}")
+            except Exception as e:
+                print(f"Failed to delete old vectors for doc {self.pk}: {e}")
 
         # Add or update vectors for this document file
         try:
@@ -42,9 +52,6 @@ class Document(models.Model):
         except Exception as e:
             # Log as appropriate in your project
             print(f"Failed to update vector DB for doc {self.pk}: {e}")
-
-        # Optionally delete vectors for previously replaced file if path changed
-        # (we key vectors by doc_id so this is usually not necessary)
 
     def delete(self, *args, **kwargs):
         doc_id = str(self.pk)
