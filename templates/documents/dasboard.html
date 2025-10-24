@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Dashboard - Rural
-Health Assistant{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %} Health Worker Dashboard - Rural Health AI | Appointment Management{% endblock %} {% block content %}
 <div class="min-h-screen bg-gray-50">
   <!-- Sidebar -->
   <div class="flex h-screen">
@@ -129,7 +128,7 @@ Health Assistant{% endblock %} {% block content %}
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                <div class="shrink-0 bg-indigo-500 rounded-md p-3">
                   <svg
                     class="h-6 w-6 text-white"
                     fill="none"
@@ -163,7 +162,7 @@ Health Assistant{% endblock %} {% block content %}
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                <div class="shrink-0 bg-green-500 rounded-md p-3">
                   <svg
                     class="h-6 w-6 text-white"
                     fill="none"
@@ -197,7 +196,7 @@ Health Assistant{% endblock %} {% block content %}
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
               <div class="flex items-center">
-                <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                <div class="shrink-0 bg-blue-500 rounded-md p-3">
                   <svg
                     class="h-6 w-6 text-white"
                     fill="none"
@@ -252,7 +251,7 @@ Health Assistant{% endblock %} {% block content %}
                     <p class="text-sm font-medium text-indigo-600 truncate">
                       {{ document.title }}
                     </p>
-                    <div class="ml-2 flex-shrink-0 flex">
+                    <div class="ml-2 shrink-0 flex">
                       <p
                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
                       >
@@ -264,7 +263,7 @@ Health Assistant{% endblock %} {% block content %}
                     <div class="sm:flex">
                       <p class="flex items-center text-sm text-gray-500">
                         <svg
-                          class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          class="shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -282,7 +281,7 @@ Health Assistant{% endblock %} {% block content %}
                         class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6"
                       >
                         <svg
-                          class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          class="shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -297,7 +296,7 @@ Health Assistant{% endblock %} {% block content %}
                         {{ document.uploaded_by.username }}
                       </p>
                     </div>
-                    <div class="ml-2 flex-shrink-0 flex">
+                    <div class="ml-2 shrink-0 flex">
                       <p class="text-sm text-gray-500">
                         {{ document.query_count }} queries
                       </p>

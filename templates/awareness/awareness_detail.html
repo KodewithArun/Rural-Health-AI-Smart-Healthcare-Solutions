@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}{{ awareness.title }} - Rural Health AI | Health Awareness{% endblock %}
+
 {% block content %}
 <!-- Main Container -->
 <div class="min-h-screen bg-gray-50">
@@ -203,10 +205,20 @@ function shareContent() {
         // Fallback for browsers that don't support Web Share API
         if (navigator.clipboard) {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Link copied to clipboard!');
+                modalAlert.success({
+                    title: 'Link Copied!',
+                    message: 'The link has been copied to your clipboard.',
+                    icon: 'links',
+                    autoClose: true,
+                    duration: 2000
+                });
             });
         } else {
-            alert('Sharing not supported on this browser');
+            modalAlert.error({
+                title: 'Sharing Not Supported',
+                message: 'Your browser does not support sharing or clipboard access.',
+                icon: 'error-warning'
+            });
         }
     }
 }

@@ -4,6 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
+# Custom error handlers
+handler400 = 'rural_health_assistant.views.custom_400'
+handler403 = 'rural_health_assistant.views.custom_403'
+handler404 = 'rural_health_assistant.views.custom_404'
+handler500 = 'rural_health_assistant.views.custom_500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,6 +22,7 @@ urlpatterns = [
     path('contact/', include('contact.urls', namespace='contact')),
     
     path('', views.home, name='home'),
+    path('emergency-alert/', views.emergency_alert, name='emergency_alert'),
 
 
  

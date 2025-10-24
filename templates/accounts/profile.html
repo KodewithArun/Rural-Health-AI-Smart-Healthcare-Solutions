@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Profile - Rural Health AI{% endblock %}
+{% block title %}Profile - {{ user.get_full_name }} | Rural Health AI{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">

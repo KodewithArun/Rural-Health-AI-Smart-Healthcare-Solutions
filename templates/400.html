@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}400 - Bad Request | Rural Health AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="max-w-lg w-full text-center">
+        <!-- 400 Illustration -->
+        <div class="mb-8">
+            <div class="text-9xl font-bold text-orange-600 mb-4">400</div>
+            <i class="ri-error-warning-fill text-6xl text-gray-400"></i>
+        </div>
+
+        <!-- Error Message -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+            Bad Request
+        </h1>
+        <p class="text-lg text-gray-600 mb-8">
+            Sorry, your browser sent a request that this server could not understand. Please check the URL and try again.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-home-5-line mr-2"></i>
+                Go Home
+            </a>
+            <button onclick="history.back()" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-arrow-left-line mr-2"></i>
+                Go Back
+            </button>
+        </div>
+
+        <!-- Common Issues -->
+        <div class="mt-12 bg-orange-50 border-l-4 border-orange-500 p-6 text-left">
+            <div class="flex items-start">
+                <div class="shrink-0">
+                    <i class="ri-information-line text-2xl text-orange-600"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-semibold text-orange-800 mb-2">
+                        Common Causes:
+                    </h3>
+                    <ul class="list-disc list-inside text-sm text-orange-700 space-y-1">
+                        <li>Malformed or invalid URL</li>
+                        <li>Invalid form data or parameters</li>
+                        <li>Missing required information</li>
+                        <li>Corrupted cookies or session data</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Fix -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+            <h3 class="text-sm font-semibold text-gray-900 mb-2">
+                <i class="ri-lightbulb-line text-blue-600 mr-1"></i>
+                Quick Fix:
+            </h3>
+            <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1">
+                <li>Clear your browser cache and cookies</li>
+                <li>Check the URL for any typos</li>
+                <li>Try refreshing the page</li>
+                <li>Contact support if the issue persists</li>
+            </ol>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-4">Helpful Links:</p>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{% url 'home' %}#services" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Our Services
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'chat:index' %}" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    AI Chat
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'home' %}#contact" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

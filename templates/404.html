@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}404 - Page Not Found | Rural Health AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="max-w-lg w-full text-center">
+        <!-- 404 Illustration -->
+        <div class="mb-8">
+            <div class="text-9xl font-bold text-blue-600 mb-4">404</div>
+            <i class="ri-error-warning-line text-6xl text-gray-400"></i>
+        </div>
+
+        <!-- Error Message -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+            Page Not Found
+        </h1>
+        <p class="text-lg text-gray-600 mb-8">
+            Sorry, we couldn't find the page you're looking for. The page may have been moved or deleted.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-home-5-line mr-2"></i>
+                Go Home
+            </a>
+            <a href="{% url 'chat:index' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-chat-3-line mr-2"></i>
+                Chat with AI
+            </a>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="mt-12 pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-4">You might be interested in:</p>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{% url 'home' %}#services" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Our Services
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'awareness_list' %}" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Health Awareness
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'home' %}#contact" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

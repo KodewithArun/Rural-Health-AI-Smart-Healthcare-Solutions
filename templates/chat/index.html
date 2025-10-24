@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Rural Health Assistant{% endblock %}
+{% block title %}AI Chat - Rural Health AI | Get Instant Medical Guidance{% endblock %}
 {% block content %}
 
 <div class="min-h-screen bg-gray-100 flex flex-col">
@@ -18,7 +18,7 @@
           <div class="text-xs font-medium text-gray-600">ASSISTANT</div>
         </div>
         <div class="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 shadow-sm">
-          <p class="text-sm text-black">Hello {{ user.username }}, I'm here to assist you with health-related questions. How may I help you today?</p>
+          <p class="text-sm text-black">Hello {{ user.first_name }}! 👋 I'm your Rural Health Assistant. I'm here to answer your health questions and provide helpful information. What can I help you with today?</p>
         </div>
       </div>
     </div>

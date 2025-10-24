@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}403 - Access Forbidden | Rural Health AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="max-w-lg w-full text-center">
+        <!-- 403 Illustration -->
+        <div class="mb-8">
+            <div class="text-9xl font-bold text-yellow-600 mb-4">403</div>
+            <i class="ri-lock-line text-6xl text-gray-400"></i>
+        </div>
+
+        <!-- Error Message -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+            Access Forbidden
+        </h1>
+        <p class="text-lg text-gray-600 mb-8">
+            Sorry, you don't have permission to access this page. Please contact your administrator if you believe this is an error.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-home-5-line mr-2"></i>
+                Go Home
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'accounts:profile' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-user-line mr-2"></i>
+                My Profile
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition-colors duration-200">
+                <i class="ri-login-box-line mr-2"></i>
+                Login
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-12 bg-yellow-50 border-l-4 border-yellow-500 p-4 text-left">
+            <div class="flex">
+                <div class="shrink-0">
+                    <i class="ri-information-line text-2xl text-yellow-600"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-semibold text-yellow-800 mb-1">
+                        Need Access?
+                    </h3>
+                    <p class="text-sm text-yellow-700">
+                        If you need access to this resource, please:
+                    </p>
+                    <ul class="list-disc list-inside text-sm text-yellow-700 mt-2 space-y-1">
+                        {% if not user.is_authenticated %}
+                        <li>Login to your account</li>
+                        {% endif %}
+                        <li>Contact your health worker or administrator</li>
+                        <li>Verify your account permissions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-4">You might be interested in:</p>
+            <div class="flex flex-wrap gap-3 justify-center">
+                <a href="{% url 'home' %}#services" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Our Services
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'chat:index' %}" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    AI Chat
+                </a>
+                <span class="text-gray-300">•</span>
+                <a href="{% url 'home' %}#contact" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

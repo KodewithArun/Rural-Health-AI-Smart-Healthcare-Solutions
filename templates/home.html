@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% block title %}Home - Rural Health AI | Smart Healthcare Solutions{% endblock %}
 
 {% block content %}
 
@@ -30,7 +31,7 @@
                 When every second counts, get immediate guidance for emergency situations. Critical first-aid instructions and emergency protocols at your fingertips.
               </p>
               
-              <button class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg ">
+              <button id="emergencyBtn" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
                 Emergency Information 
                 <span class="ml-2 group-hover:translate-x-1 transition-transform duration-300">⚡</span>
               </button>
@@ -704,6 +705,134 @@
                 behavior: 'smooth'
             });
         });
+    });
+
+    // Emergency Button Handler
+    document.getElementById('emergencyBtn').addEventListener('click', async function() {
+        // Show emergency confirmation modal
+        const confirmed = await modalAlert.emergencyAlert({
+            title: '🚨 EMERGENCY ALERT',
+            message: `
+                <div class="text-left space-y-3">
+                    <p class="font-semibold text-gray-800">This will:</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-600 mt-1">✓</span>
+                            <span>Send an emergency notification to our medical team</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-600 mt-1">✓</span>
+                            <span>Initiate a call to emergency services</span>
+                        </li>
+                    </ul>
+                    <p class="font-semibold text-red-600 mt-4">Press Confirm if this is a medical emergency.</p>
+                </div>
+            `,
+            confirmText: 'Confirm Emergency',
+            cancelText: 'Cancel'
+        });
+
+        if (confirmed) {
+            // Collect user information
+            const userName = '{{ user.full_name|default:"Anonymous User" }}';
+            const userEmail = '{{ user.email|default:"Not provided" }}';
+            const userPhone = '{{ user.phone_number|default:"Not provided" }}';
+            
+            // Get user location if available
+            let userLocation = 'Not provided';
+            let googleMapsLink = 'Not available';
+            if (navigator.geolocation) {
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject);
+                    });
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    userLocation = `Lat: ${lat}, Lng: ${lng}`;
+                    googleMapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+                } catch (error) {
+                    console.log('Location access denied');
+                }
+            }
+
+            // Show loading modal
+            const loader = modalAlert.loading('⚡ Sending Emergency Alert...');
+
+            // Send emergency alert to backend
+            try {
+                const response = await fetch('/emergency-alert/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_name: userName,
+                        user_email: userEmail,
+                        user_phone: userPhone,
+                        user_location: userLocation,
+                        google_maps_link: googleMapsLink
+                    })
+                });
+
+                const data = await response.json();
+                loader.close();
+
+                if (data.success) {
+                    // Show success message
+                    await modalAlert.success({
+                        title: '✅ EMERGENCY ALERT SENT!',
+                        message: `
+                            <div class="space-y-3 text-left">
+                                <p>✓ Our medical team has been notified.</p>
+                                <p>✓ Emergency services will contact you shortly.</p>
+                                <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded mt-4">
+                                    <p class="font-semibold text-red-800">Emergency Hotline</p>
+                                    <p class="text-2xl font-bold text-red-600 mt-1">${data.phone_number}</p>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">You will now be connected to emergency services.</p>
+                            </div>
+                        `,
+                        confirmText: 'Call Now'
+                    });
+
+                    // Initiate phone call
+                    window.location.href = 'tel:' + data.phone_number;
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                loader.close();
+                console.error('Error sending emergency alert:', error);
+                
+                const callNow = await modalAlert.error({
+                    title: '❌ Alert Sending Failed',
+                    message: `
+                        <div class="space-y-3">
+                            <p>The alert couldn't be sent, but you can still call emergency services.</p>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                                <p class="font-semibold text-red-800">Emergency Numbers:</p>
+                                <p class="text-xl font-bold text-red-600">📞 9839096052</p>
+                                <p class="text-xl font-bold text-red-600">📞 9807973936</p>
+                            </div>
+                        </div>
+                    `,
+                    confirmText: 'Call Now'
+                });
+                
+                // Fallback: direct call
+                if (callNow) {
+                    window.location.href = 'tel:9839096052';
+                }
+            }
+        } else {
+            // User cancelled
+            await modalAlert.alert({
+                title: 'Emergency Alert Cancelled',
+                message: 'If you need help, you can always click the emergency button again.',
+                icon: 'information',
+                iconColor: 'blue'
+            });
+        }
     });
 
 </script>

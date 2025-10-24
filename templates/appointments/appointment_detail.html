@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Appointment Details - Rural Health AI{% endblock %}
+{% block title %}Appointment Details - {{ appointment.date|date:"M d, Y" }} | Rural Health AI{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
@@ -180,10 +180,9 @@
                                 Update Appointment
                             </a>
                             {% if user.is_admin_role %}
-                            <form method="POST" action="{% url 'appointments:delete' appointment.pk %}" 
-                                  onsubmit="return confirm('Are you sure you want to delete this appointment?');">
+                            <form method="POST" action="{% url 'appointments:delete' appointment.pk %}" id="deleteAppointmentForm">
                                 {% csrf_token %}
-                                <button type="submit" 
+                                <button type="button" id="deleteAppointmentBtn"
                                         class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded">
                                     Delete Appointment
                                 </button>
@@ -216,4 +215,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Handle appointment deletion with modal
+    const deleteBtn = document.getElementById('deleteAppointmentBtn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', async function() {
+            const confirmed = await modalAlert.confirm({
+                title: 'Delete Appointment?',
+                message: `
+                    <div class="space-y-3 text-left">
+                        <p>Are you sure you want to delete this appointment?</p>
+                        <div class="bg-gray-50 border-l-4 border-red-500 p-3 rounded">
+                            <p class="text-sm text-gray-700"><strong>Patient:</strong> {{ appointment.patient.get_full_name }}</p>
+                            <p class="text-sm text-gray-700"><strong>Date:</strong> {{ appointment.date|date:"F d, Y" }}</p>
+                            <p class="text-sm text-gray-700"><strong>Time:</strong> {{ appointment.time|time:"g:i A" }}</p>
+                        </div>
+                        <p class="text-red-600 font-semibold">This action cannot be undone.</p>
+                    </div>
+                `,
+                icon: 'delete-bin',
+                iconColor: 'red',
+                confirmText: 'Delete',
+                cancelText: 'Cancel'
+            });
+
+            if (confirmed) {
+                document.getElementById('deleteAppointmentForm').submit();
+            }
+        });
+    }
+</script>
 {% endblock %}

@@ -1,14 +1,53 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Healthcare Chat Interface</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>{% block title %}Rural Health AI - Smart Healthcare Solutions for Rural Communities{% endblock %}</title>
+    <meta name="title" content="{% block meta_title %}Rural Health AI - Smart Healthcare Solutions for Rural Communities{% endblock %}">
+    <meta name="description" content="{% block meta_description %}AI-powered healthcare platform providing 24/7 medical guidance, telemedicine consultations, and health awareness for rural communities. Get instant symptom assessment and emergency support.{% endblock %}">
+    <meta name="keywords" content="rural health, AI healthcare, telemedicine, medical chatbot, health assistant, rural healthcare solutions, emergency medical support, health awareness, online doctor consultation">
+    <meta name="author" content="Rural Health AI">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}Rural Health AI - Smart Healthcare Solutions{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}AI-powered healthcare platform providing 24/7 medical guidance and telemedicine consultations for rural communities.{% endblock %}">
+    <meta property="og:image" content="{% static 'images/Logo.png' %}">
+    <meta property="og:site_name" content="Rural Health AI">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request.build_absolute_uri }}">
+    <meta name="twitter:title" content="{% block twitter_title %}Rural Health AI - Smart Healthcare Solutions{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}AI-powered healthcare platform for rural communities with 24/7 medical guidance.{% endblock %}">
+    <meta name="twitter:image" content="{% static 'images/Logo.png' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/Logo.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/Logo.png' %}">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="msapplication-TileColor" content="#3B82F6">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Stylesheets -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -22,6 +61,62 @@
             }
         }
     </script>
+    
+    <!-- Custom Scripts -->
+    <script src="{% static 'js/modal-alerts.js' %}" defer></script>
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalOrganization",
+        "name": "Rural Health AI",
+        "alternateName": "Smart Healthcare Solutions",
+        "description": "AI-powered healthcare platform providing 24/7 medical guidance, telemedicine consultations, and health awareness for rural communities.",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/Logo.png' %}",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+977-9839096052",
+            "contactType": "Emergency Services",
+            "availableLanguage": ["English", "Nepali"],
+            "areaServed": "NP"
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Bhanu-10, ChowkChisa Paani",
+            "addressLocality": "Tanahun",
+            "addressCountry": "Nepal"
+        },
+        "sameAs": [
+            "https://www.facebook.com/ruralhealthai",
+            "https://twitter.com/ruralhealthai",
+            "https://www.linkedin.com/company/ruralhealthai"
+        ],
+        "medicalSpecialty": [
+            "Telemedicine",
+            "Emergency Medicine",
+            "Primary Care",
+            "Health Education"
+        ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Rural Health AI",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.scheme }}://{{ request.get_host }}/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    {% block extra_head %}{% endblock %}
 </head>
 
 <body class="min-h-screen">
