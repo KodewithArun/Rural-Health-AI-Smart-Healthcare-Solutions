@@ -42,8 +42,29 @@ def send_message(request):
     if form.is_valid():
         question = form.cleaned_data['message']
         try:
-            # Fixed: ensure RAG chain returns correctly
-            response = get_rag_response(question)
+            # Get recent chat history (last 5 conversations for context)
+            recent_chats = ChatHistory.objects.filter(user=request.user).order_by('-timestamp')[:5]
+            
+            # Format chat history for context
+            chat_history_text = ""
+            if recent_chats.exists():
+                history_lines = []
+                for chat in reversed(list(recent_chats)):  # Reverse to get chronological order
+                    history_lines.append(f"User: {chat.question}")
+                    history_lines.append(f"Assistant: {chat.answer}")
+                chat_history_text = "\n".join(history_lines)
+            else:
+                chat_history_text = "No previous conversation."
+            
+            # Get user's name for personalization
+            user_name = getattr(request.user, 'first_name', '') or request.user.username
+            
+            # Call RAG with context
+            response = get_rag_response(
+                question=question,
+                chat_history=chat_history_text,
+                user_name=user_name
+            )
 
             chat_history = ChatHistory.objects.create(
                 user=request.user,

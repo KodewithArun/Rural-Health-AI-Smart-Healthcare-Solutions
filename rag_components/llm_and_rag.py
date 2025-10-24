@@ -44,13 +44,18 @@ def get_llm():
 
 from .agentic_rag import get_agentic_rag_response
 
-def get_rag_response(question: str, k: int = None):
+def get_rag_response(question: str, chat_history: str = None, user_name: str = None, k: int = None):
     """
     Returns {"answer": ..., "sources": [ {title, content, metadata}, ... ] }
+    
+    Args:
+        question: The user's current question
+        chat_history: Formatted string of recent chat history (optional)
+        user_name: User's name for personalization (optional)
+        k: Number of documents to retrieve (optional, for compatibility)
     """
-    # This function now delegates to the new agentic RAG.
-    # The old implementation is preserved below for reference but is no longer used.
-    return get_agentic_rag_response(question)
+    # This function now delegates to the new agentic RAG with context awareness
+    return get_agentic_rag_response(question, chat_history=chat_history, user_name=user_name)
     
     # # Old implementation preserved for reference (uses new chain methods)
     # """

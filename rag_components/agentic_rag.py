@@ -23,12 +23,16 @@ class GraphState(TypedDict):
         generation: The LLM's generated answer.
         documents: A list of retrieved documents.
         sources: A list of source information for the answer.
+        chat_history: Recent chat history for context-aware responses.
+        user_name: User's name for personalization.
     """
     question: str
     classification: str
     generation: str
     documents: List[Document]
     sources: List[dict]
+    chat_history: str
+    user_name: str
 
 # --- Prompt Templates ---
 CLASSIFICATION_PROMPT_TEMPLATE = """
@@ -47,48 +51,47 @@ Category:
 """
 
 RAG_PROMPT_TEMPLATE = """
-You are the Rural Health Assistant.
-Answer the user's health-related question using only the information in the Context below. Do not add outside knowledge or make assumptions.
+You are a helpful health assistant. Give a clear, short answer.
 
-Decision rule:
-- If the Context clearly answers the question, give a short, direct answer.
-- If the Context is missing, ambiguous, or contradictory, respond exactly: I don't have enough information to answer this question.
+{chat_history_section}
 
-Output rules:
-- Start with a concise answer (1–3 sentences).
-- Use plain language; define medical terms only if essential.
-- Prefer brief bullet points for steps or options.
-- Include a small Markdown table only if it clearly improves readability.
-- Do not mention the context, documents, or sources in the answer.
-- Do not fabricate any facts.
+Context: {context}
 
-Context (may include multiple documents; use only their content):
-{context}
+Question: {question}
 
-User question:
-{question}
+Instructions:
+- Keep your answer SHORT - maximum 4-5 sentences
+- Get straight to the point
+- Use 2-3 bullet points if listing things
+- Don't repeat the question back
+- Don't say "I'm sorry to hear" or give long sympathy statements
+- If context is not enough, say: "I don't have enough details to answer this properly."
+- End with: "For proper diagnosis, consult a healthcare professional."
+- No extra fluff or unnecessary explanations
 
 Answer:
 """
 
 IMPROVED_FALLBACK_PROMPT_TEMPLATE = """
-You are a Rural Health Assistant, a helpful AI.
-You were unable to find an answer in your local documents and have performed a web search.
-Your task is to answer the user's health-related question based on the provided web search results.
+You are a helpful health assistant. Give a clear, short answer.
 
-**Instructions:**
-1.  Synthesize the information from the search results into a clear, concise, and simple answer.
-2.  Focus ONLY on the information directly present in the search results. Do not add external knowledge.
-3.  If the search results are ambiguous, contradictory, or do not contain a clear answer to the question, you MUST respond with: "I was unable to find a clear answer from the web search results. For reliable medical information, please consult a healthcare professional."
-4.  Always conclude your answer by recommending the user consult a qualified healthcare professional for personal medical advice.
+{chat_history_section}
 
-**Web Search Results:**
+Question: {question}
+
+Information available:
 {context}
 
-**User Question:**
-{question}
+Instructions:
+- Keep your answer SHORT - maximum 4-5 sentences
+- Get straight to the point
+- Use 2-3 bullet points if listing things
+- Don't repeat the question back
+- Don't say "I'm sorry to hear" or give long sympathy statements
+- End with: "For proper diagnosis, consult a healthcare professional."
+- No extra fluff or unnecessary explanations
 
-**Answer:**
+Answer:
 """
 
 # --- Nodes ---
@@ -119,12 +122,25 @@ def generate_rag_answer(state: GraphState) -> GraphState:
     print("---NODE: GENERATE RAG ANSWER---")
     question = state["question"]
     documents = state["documents"]
+    chat_history = state.get("chat_history", "No previous conversation.")
     
-    prompt = PromptTemplate(input_variables=["context", "question"], template=RAG_PROMPT_TEMPLATE)
+    # Format chat history section only if there's actual history
+    chat_history_section = ""
+    if chat_history and "No previous conversation" not in chat_history:
+        chat_history_section = f"**Previous conversation context:**\n{chat_history}\n"
+    
+    prompt = PromptTemplate(
+        input_variables=["context", "question", "chat_history_section"], 
+        template=RAG_PROMPT_TEMPLATE
+    )
     llm = get_llm()
     rag_chain = prompt | llm
     
-    generation = rag_chain.invoke({"context": documents, "question": question}).content
+    generation = rag_chain.invoke({
+        "context": documents, 
+        "question": question,
+        "chat_history_section": chat_history_section
+    }).content
     
     sources = []
     for doc in documents:
@@ -141,11 +157,45 @@ def web_search(state: GraphState) -> GraphState:
     """Node to perform a web search as a fallback."""
     print("---NODE: WEB SEARCH---")
     question = state["question"]
+    chat_history = state.get("chat_history", "No previous conversation.")
+    
+    # If we have chat history, reformulate vague questions for better web search
+    reformulated_query = question
+    if chat_history and "No previous conversation" not in chat_history:
+        # Check if question has vague pronouns (it, that, this, them, etc.)
+        vague_pronouns = ["it", "that", "this", "these", "those", "them"]
+        question_lower = question.lower()
+        if any(f" {pronoun} " in f" {question_lower} " or question_lower.startswith(pronoun + " ") for pronoun in vague_pronouns):
+            print(f"Detected vague question: '{question}', reformulating with context...")
+            
+            # Use LLM to reformulate the question with context
+            reformulation_prompt = f"""You are reformulating a vague question into a clear search query.
+
+Previous conversation:
+{chat_history}
+
+Current vague question: "{question}"
+
+Task: Rewrite this as a clear, standalone search query that Google can understand.
+Output ONLY the reformulated question, nothing else. No explanations.
+
+Reformulated question:"""
+            
+            try:
+                llm = get_llm()
+                reformulated_query = llm.invoke(reformulation_prompt).content.strip()
+                # Remove quotes if LLM added them
+                reformulated_query = reformulated_query.strip('"\'')
+                print(f"Reformulated query: '{reformulated_query}'")
+            except Exception as e:
+                print(f"Reformulation failed: {e}, using original question")
+                reformulated_query = question
+    
     search = SerpAPIWrapper()
     try:
-        search_results = search.run(question)
+        search_results = search.run(reformulated_query)
         documents = [Document(page_content=search_results)]
-        print("Performed web search.")
+        print(f"Performed web search for: '{reformulated_query}'")
         return {**state, "documents": documents}
     except Exception as e:
         print(f"Web search failed: {e}")
@@ -156,24 +206,46 @@ def generate_fallback_answer(state: GraphState) -> GraphState:
     print("---NODE: GENERATE FALLBACK ANSWER---")
     question = state["question"]
     documents = state["documents"]
+    chat_history = state.get("chat_history", "No previous conversation.")
 
-    prompt = PromptTemplate(input_variables=["context", "question"], template=IMPROVED_FALLBACK_PROMPT_TEMPLATE)
+    # Format chat history section only if there's actual history
+    chat_history_section = ""
+    if chat_history and "No previous conversation" not in chat_history:
+        chat_history_section = f"**Previous conversation context:**\n{chat_history}\n"
+
+    prompt = PromptTemplate(
+        input_variables=["context", "question", "chat_history_section"], 
+        template=IMPROVED_FALLBACK_PROMPT_TEMPLATE
+    )
     llm = get_llm()
     fallback_chain = prompt | llm
     
-    generation = fallback_chain.invoke({"context": documents, "question": question}).content
+    generation = fallback_chain.invoke({
+        "context": documents, 
+        "question": question,
+        "chat_history_section": chat_history_section
+    }).content
     print("Generated answer from web search.")
     return {**state, "generation": generation, "sources": [{"title": "Web Search", "content": "Answer generated from web search results."}]}
 
 def handle_greeting(state: GraphState) -> GraphState:
     """Node to handle simple greetings."""
     print("---NODE: HANDLE GREETING---")
-    return {**state, "generation": "Hello! I am your Rural Health Assistant. How can I help you today?", "sources": []}
+    user_name = state.get("user_name", "")
+    chat_history = state.get("chat_history", "")
+    
+    # Personalized greeting based on history
+    if chat_history and "No previous conversation" not in chat_history:
+        greeting = f"Hello{' ' + user_name if user_name else ''}! 👋 Good to see you again! I'm here to help with any health questions you have. What would you like to know?"
+    else:
+        greeting = f"Hello{' ' + user_name if user_name else ''}! 👋 I'm your Rural Health Assistant. I'm here to answer your health questions and provide helpful information. What can I help you with today?"
+    
+    return {**state, "generation": greeting, "sources": []}
 
 def handle_off_topic(state: GraphState) -> GraphState:
     """Node to handle off-topic questions."""
     print("---NODE: HANDLE OFF-TOPIC---")
-    return {**state, "generation": "I am a Rural Health Assistant. I can only answer questions related to health and wellness. How can I help you with a health topic?", "sources": []}
+    return {**state, "generation": "I specialize in health and wellness topics. 😊 I'd love to help you with questions about symptoms, treatments, prevention, or any health concerns. What health topic are you curious about?", "sources": []}
 
 # --- Conditional Edges ---
 def route_question(state: GraphState) -> str:
@@ -192,9 +264,26 @@ def route_question(state: GraphState) -> str:
 def decide_after_rag(state: GraphState) -> str:
     """Edge to decide whether the RAG answer is sufficient or if a fallback is needed."""
     print("---EDGE: DECIDE AFTER RAG---")
-    if "i don't have enough information" in state["generation"].lower():
+    
+    # Check if no documents were retrieved
+    if not state.get("documents") or len(state.get("documents", [])) == 0:
+        print("Decision: No documents retrieved, falling back to web search.")
+        return "web_search"
+    
+    # Check if LLM says it doesn't have enough information
+    generation_lower = state["generation"].lower()
+    if any(phrase in generation_lower for phrase in [
+        "don't have enough", 
+        "don't have sufficient",
+        "insufficient information",
+        "not enough information",
+        "don't have details",
+        "unable to answer",
+        "cannot answer"
+    ]):
         print("Decision: RAG answer is insufficient, falling back to web search.")
         return "web_search"
+    
     print("Decision: RAG answer is sufficient.")
     return END
 
@@ -233,11 +322,30 @@ def build_agent_graph() -> Runnable:
     return workflow.compile()
 
 # --- Main Entry Point ---
-def get_agentic_rag_response(question: str, config: RunnableConfig = None):
-    """The main entry point for the agentic RAG."""
+def get_agentic_rag_response(question: str, chat_history: str = None, user_name: str = None, config: RunnableConfig = None):
+    """
+    The main entry point for the agentic RAG.
+    
+    Args:
+        question: The user's current question
+        chat_history: Formatted string of recent chat history (optional)
+        user_name: User's name for personalization (optional)
+        config: LangGraph configuration (optional)
+    
+    Returns:
+        dict with 'answer' and 'sources' keys
+    """
     try:
         app = build_agent_graph()
-        initial_state = {"question": question, "classification": "", "documents": [], "generation": "", "sources": []}
+        initial_state = {
+            "question": question, 
+            "classification": "", 
+            "documents": [], 
+            "generation": "", 
+            "sources": [],
+            "chat_history": chat_history or "No previous conversation.",
+            "user_name": user_name or ""
+        }
         final_state = app.invoke(initial_state, config=config)
         
         return {
@@ -246,5 +354,7 @@ def get_agentic_rag_response(question: str, config: RunnableConfig = None):
         }
     except Exception as e:
         print(f"Agentic RAG error: {e}")
+        import traceback
+        traceback.print_exc()
         return {"answer": "An error occurred while processing your request.", "sources": []}
 

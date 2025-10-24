@@ -4,192 +4,163 @@
 {% block content %}
 
 <div class="min-h-screen bg-gray-100 flex flex-col">
-  <!-- Full-screen chat container -->
-  <div class="flex-1 flex flex-col bg-white shadow-lg mx-2 sm:mx-4 md:mx-6 lg:mx-10 xl:mx-12 my-4 rounded-xl overflow-hidden">
+  
+  <!-- Messages Container -->
+  <div id="messages-container" class="flex-1 overflow-y-auto px-6 py-6">
     
-    <!-- Messages Container (flex-grow to fill space) -->
-    <div id="messages-container" class="flex-grow overflow-y-auto p-4 bg-white">
-      <div class="space-y-4">
-        
-        <!-- Welcome Message -->
-        <div class="flex items-start space-x-3">
-          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
+    <!-- Welcome Message -->
+    <div class="mb-8 flex justify-start">
+      <div class="max-w-2xl">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+            <span class="text-white text-xs font-semibold">AI</span>
           </div>
-          <div class="max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-            <div class="bg-gray-100 rounded-2xl px-4 py-3">
-              <p class="text-sm text-gray-900">Hi {{ user.username }}! 👋 I'm your Rural Health Assistant. I can help you with health questions, find nearby facilities, and provide wellness tips.</p>
-            </div>
-            <p class="text-xs text-gray-500 mt-1">Just now</p>
-          </div>
+          <div class="text-xs font-medium text-gray-600">ASSISTANT</div>
         </div>
-
-        <!-- Chat History -->
-        {% for chat in recent_chats reversed %}
-        <!-- User Message -->
-        <div class="flex justify-end">
-          <div class="max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-            <div class="bg-blue-500 text-white rounded-2xl px-4 py-3">
-              <p class="text-sm">{{ chat.question }}</p>
-            </div>
-            <p class="text-xs text-gray-500 mt-1 text-right">{{ chat.timestamp|date:"H:i" }}</p>
-          </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 shadow-sm">
+          <p class="text-sm text-black">Hello {{ user.username }}, I'm here to assist you with health-related questions. How may I help you today?</p>
         </div>
-
-        <!-- Assistant Message -->
-        <div class="flex items-start space-x-3">
-          <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </div>
-          <div class="max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-            <div class="bg-gray-100 rounded-2xl px-4 py-3">
-              <p class="text-sm text-gray-900">{{ chat.answer }}</p>
-            </div>
-            <p class="text-xs text-gray-500 mt-1">{{ chat.timestamp|date:"H:i" }}</p>
-          </div>
-        </div>
-        {% endfor %}
-
       </div>
     </div>
+
+    <!-- Chat History -->
+    {% for chat in recent_chats reversed %}
+    <!-- User Message -->
+    <div class="mb-8 flex justify-end">
+      <div class="max-w-2xl">
+        <div class="flex items-center justify-end space-x-2 mb-2">
+          <div class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center shrink-0">
+            <span class="text-white text-xs font-semibold">{{ user.first_name|first|upper }}</span>
+          </div>
+          <div class="text-xs font-medium text-gray-600">{{ user.first_name|upper }}</div>
+         
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-lg px-5 py-4 shadow-sm">
+          <p class="text-sm text-black">{{ chat.question }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assistant Message -->
+    <div class="mb-8 flex justify-start">
+      <div class="max-w-2xl">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+            <span class="text-white text-xs font-semibold">AI</span>
+          </div>
+          <div class="text-xs font-medium text-gray-600">Health Assistant</div>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 shadow-sm">
+          <p class="text-sm text-black">{{ chat.answer }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
 
     <!-- Typing Indicator -->
-    <div id="typing-indicator" class="hidden p-4 border-t border-gray-100">
-      <div class="flex items-start space-x-3">
-        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
+    <div id="typing-indicator" class="hidden mb-8 flex justify-start">
+      <div class="max-w-2xl">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+            <span class="text-white text-xs font-semibold">AI</span>
+          </div>
+          <div class="text-xs font-medium text-gray-600">Health Assistant</div>
         </div>
-        <div class="bg-gray-100 rounded-2xl px-4 py-3">
-          <div class="flex items-center space-x-2">
-            <div class="flex space-x-1">
-              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
-              <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
-            </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 shadow-sm">
+          <div class="flex items-center space-x-1">
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="p-4 border-t border-gray-100 bg-gray-50">
-      <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
-        <button class="quick-action" data-message="Find nearest hospital">
-          🏥 Hospital
-        </button>
-        <button class="quick-action" data-message="Emergency contacts">
-          🚨 Emergency
-        </button>
-        <button class="quick-action" data-message="Health tips">
-          💡 Tips
-        </button>
-        <button class="quick-action" data-message="Symptom checker">
-          🩺 Symptoms
-        </button>
-      </div>
-    </div>
+  </div>
 
-    <!-- Input Area (Sticky at bottom) -->
-    <div class="p-4 bg-white border-t border-gray-200">
-      <form id="chat-form" class="flex items-center space-x-3">
+  <!-- Input Area -->
+  <div class="bg-white border-t border-gray-300">
+    <div class="px-6 py-4">
+      <form id="chat-form">
         {% csrf_token %}
-        <div class="flex-1 relative">
+        <div class="flex items-center space-x-3">
           <input
             type="text"
             name="message"
             id="message-input"
-            class="w-full px-4 py-3 pr-16 bg-gray-100 border-0 rounded-full focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 placeholder-gray-500 text-sm"
-            placeholder="Type a message..."
+            class="flex-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 text-sm text-black placeholder-gray-500"
+            placeholder="Type your message..."
             maxlength="500"
             autocomplete="off"
           />
-          <span id="char-counter" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
-            0/500
-          </span>
+          <button
+            type="submit"
+            id="send-btn"
+            class="px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Send
+          </button>
         </div>
-        
-        <button
-          type="button"
-          id="voice-btn"
-          class="p-2.5 text-gray-500 hover:text-blue-500 transition-colors"
-          title="Voice input (coming soon)"
-        >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
-        </button>
-        
-        <button
-          type="submit"
-          id="send-btn"
-          class="p-2.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
-        </button>
+        <div class="flex items-center justify-between mt-2">
+          <div class="flex space-x-2">
+            <button type="button" class="quick-action" data-message="Find nearest hospital">Hospital</button>
+            <button type="button" class="quick-action" data-message="Emergency contacts">Emergency</button>
+            <button type="button" class="quick-action" data-message="Health tips">Tips</button>
+            <button type="button" class="quick-action" data-message="Symptom checker">Symptoms</button>
+          </div>
+          <span id="char-counter" class="text-xs text-gray-500">0/500</span>
+        </div>
       </form>
     </div>
-
   </div>
+
 </div>
 
 <style>
 /* Quick action buttons */
 .quick-action {
-  padding: 0.5rem 1rem;
+  padding: 0.375rem 0.75rem;
   font-size: 0.75rem;
-  background-color: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 9999px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
   color: #374151;
   font-weight: 500;
-  transition: all 0.2s;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-}
-.quick-action:hover {
-  background-color: #f3f4f6;
-}
-@media (min-width: 640px) {
-  .quick-action {
-    font-size: 0.875rem;
-  }
+  transition: all 0.15s;
 }
 
-/* Custom scrollbar */
+.quick-action:hover {
+  background-color: #e5e7eb;
+}
+
+/* Scrollbar */
 #messages-container::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 #messages-container::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f3f4f6;
 }
 
 #messages-container::-webkit-scrollbar-thumb {
   background: #d1d5db;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 #messages-container::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
 
-/* Message animations */
-.message-slide-in {
-  animation: slideIn 0.2s ease-out;
+/* Animation */
+.message-appear {
+  animation: appear 0.2s ease-out;
 }
 
-@keyframes slideIn {
+@keyframes appear {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -197,35 +168,14 @@
   }
 }
 
-/* Full height on mobile */
-@media (max-width: 640px) {
-  .min-h-screen {
-    height: 100vh;
-  }
-
-  #messages-container {
-    min-height: 60vh;
-  }
-
-  .quick-action {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    padding-top: 0.375rem;
-    padding-bottom: 0.375rem;
-    font-size: 0.75rem;
-  }
+/* Full height layout */
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
-/* Ensure no overflow on small screens */
-body {
-  overscroll-behavior: none;
-}
-
-/* Optional: Add padding to prevent content from hiding under mobile browser UI */
-@supports (-webkit-touch-callout: none) {
-  .min-h-screen {
-    min-height: -webkit-fill-available;
-  }
+.min-h-screen {
+  height: 100vh;
 }
 </style>
 
@@ -235,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const messageInput = document.getElementById('message-input');
   const messagesContainer = document.getElementById('messages-container');
   const typingIndicator = document.getElementById('typing-indicator');
-  const voiceBtn = document.getElementById('voice-btn');
   const sendBtn = document.getElementById('send-btn');
   const charCounter = document.getElementById('char-counter');
   const quickActions = document.querySelectorAll('.quick-action');
@@ -244,14 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
   messageInput.addEventListener('input', function() {
     const length = this.value.length;
     charCounter.textContent = `${length}/500`;
-    
-    if (length > 450) {
-      charCounter.classList.add('text-red-500');
-      charCounter.classList.remove('text-gray-400');
-    } else {
-      charCounter.classList.remove('text-red-500');
-      charCounter.classList.add('text-gray-400');
-    }
   });
 
   // Quick action buttons
@@ -260,11 +201,6 @@ document.addEventListener('DOMContentLoaded', function() {
       messageInput.value = this.dataset.message;
       messageInput.focus();
     });
-  });
-
-  // Voice button placeholder
-  voiceBtn.addEventListener('click', function() {
-    alert('Voice input feature coming soon!');
   });
 
   // Auto scroll to bottom
@@ -284,39 +220,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add message to chat
   function addMessage(message, isUser = false) {
-    const timestamp = new Date().toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
-
     const messageHTML = isUser ? `
-      <div class="flex justify-end message-slide-in">
-        <div class="max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-          <div class="bg-blue-500 text-white rounded-2xl px-4 py-3">
-            <p class="text-sm">${escapeHtml(message)}</p>
+      <div class="mb-8 message-appear flex justify-end">
+        <div class="max-w-2xl">
+          <div class="flex items-center justify-end space-x-2 mb-2">
+            <div class="text-xs font-medium text-gray-600">YOU</div>
+            <div class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center shrink-0">
+              <span class="text-white text-xs font-semibold">U</span>
+            </div>
           </div>
-          <p class="text-xs text-gray-300 mt-1 text-right">${timestamp}</p>
+          <div class="bg-green-50 border border-green-200 rounded-lg px-5 py-4 shadow-sm">
+            <p class="text-sm text-black">${escapeHtml(message)}</p>
+          </div>
         </div>
       </div>
     ` : `
-      <div class="flex items-start space-x-3 message-slide-in">
-        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        </div>
-        <div class="max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
-          <div class="bg-gray-100 rounded-2xl px-4 py-3">
-            <p class="text-sm text-gray-900">${message}</p>
+      <div class="mb-8 message-appear flex justify-start">
+        <div class="max-w-2xl">
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+              <span class="text-white text-xs font-semibold">AI</span>
+            </div>
+            <div class="text-xs font-medium text-gray-600">ASSISTANT</div>
           </div>
-          <p class="text-xs text-gray-500 mt-1">${timestamp}</p>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 shadow-sm">
+            <p class="text-sm text-black">${message}</p>
+          </div>
         </div>
       </div>
     `;
 
-    const messagesDiv = messagesContainer.querySelector('.space-y-4');
-    messagesDiv.insertAdjacentHTML('beforeend', messageHTML);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = messageHTML;
+    messagesContainer.insertBefore(tempDiv.firstElementChild, typingIndicator);
     scrollToBottom();
   }
 
@@ -340,8 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear input
     messageInput.value = '';
     charCounter.textContent = '0/500';
-    charCounter.classList.remove('text-red-500');
-    charCounter.classList.add('text-gray-400');
     
     // Show typing
     showTyping();
@@ -375,9 +309,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Enter to send message
+  // Enter to send
   messageInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       chatForm.dispatchEvent(new Event('submit'));
     }
