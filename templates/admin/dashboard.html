@@ -1,0 +1,500 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Dashboard & Analytics{% endblock %}
+
+{% block extrahead %}
+
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Remix Icons -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+    body {
+        background-color: #f9fafb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard & Analytics</h1>
+        <p class="text-sm text-gray-500">Last updated: {{ current_date|date:"F d, Y - h:i A" }}</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Users Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-user-line text-2xl text-blue-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_users }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Users</h3>
+            <p class="text-xs text-gray-500">{{ new_users_week }} new this week</p>
+        </div>
+        
+        <!-- Appointments Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-calendar-line text-2xl text-purple-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_appointments }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Appointments</h3>
+            <p class="text-xs text-gray-500">{{ pending_appointments }} pending</p>
+        </div>
+        
+        <!-- Chats Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-message-3-line text-2xl text-green-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_chats }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Conversations</h3>
+            <p class="text-xs text-gray-500">{{ chats_today }} today</p>
+        </div>
+        
+        <!-- Documents Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-text-line text-2xl text-yellow-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_documents }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Documents</h3>
+            <p class="text-xs text-gray-500">{{ documents_this_month }} this month</p>
+        </div>
+        
+        <!-- Enquiries Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-mail-line text-2xl text-red-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_enquiries }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Contact Enquiries</h3>
+            <p class="text-xs text-gray-500">{{ pending_enquiries }} pending</p>
+        </div>
+        
+        <!-- Awareness Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-megaphone-line text-2xl text-indigo-600"></i>
+                </div>
+                <span class="text-3xl font-bold text-gray-900">{{ total_awareness }}</span>
+            </div>
+            <h3 class="text-sm font-medium text-gray-600 mb-2">Awareness Campaigns</h3>
+            <p class="text-xs text-gray-500">{{ awareness_events }} events</p>
+        </div>
+        
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Appointment Trend Chart -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Appointments Trend (Last 7 Days)</h3>
+            <div class="h-64">
+                <canvas id="appointmentTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Chat Activity Chart -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Chat Activity (Last 7 Days)</h3>
+            <div class="h-64">
+                <canvas id="chatTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Appointment Status Distribution -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Appointment Status Distribution</h3>
+            <div class="h-64 flex items-center justify-center">
+                <canvas id="appointmentStatusChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- User Role Distribution -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">User Role Distribution</h3>
+            <div class="h-64 flex items-center justify-center">
+                <canvas id="userRoleChart"></canvas>
+            </div>
+        </div>
+        
+    </div>
+    
+
+    
+    <!-- Tables Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Recent Appointments -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
+            {% if recent_appointments %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for appointment in recent_appointments %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ appointment.villager.first_name }} {{ appointment.villager.last_name }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ appointment.date|date:"M d, Y" }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                                    {% if appointment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif appointment.status == 'approved' %}bg-blue-100 text-blue-800
+                                    {% elif appointment.status == 'completed' %}bg-green-100 text-green-800
+                                    {% elif appointment.status == 'cancelled' %}bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {{ appointment.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-calendar-line text-4xl mb-2"></i>
+                <p class="text-sm">No appointments yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Most Active Users -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Most Active Users</h3>
+            {% if most_active_users %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chats</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for user in most_active_users %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ user.user__first_name }} {{ user.user__last_name }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                                    {% if user.user__role == 'villager' %}bg-blue-100 text-blue-800
+                                    {% elif user.user__role == 'health_worker' %}bg-purple-100 text-purple-800
+                                    {% elif user.user__role == 'admin' %}bg-pink-100 text-pink-800
+                                    {% endif %}">
+                                    {{ user.user__role|title }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-900">{{ user.chat_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-message-3-line text-4xl mb-2"></i>
+                <p class="text-sm">No chat activity yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Recent Enquiries -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Contact Enquiries</h3>
+            {% if recent_enquiries %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for enquiry in recent_enquiries %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ enquiry.first_name }} {{ enquiry.last_name }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ enquiry.created_at|date:"M d, Y" }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                                    {% if enquiry.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif enquiry.status == 'resolved' %}bg-green-100 text-green-800
+                                    {% elif enquiry.status == 'in_progress' %}bg-blue-100 text-blue-800
+                                    {% endif %}">
+                                    {{ enquiry.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-mail-line text-4xl mb-2"></i>
+                <p class="text-sm">No enquiries yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Top Health Workers -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Health Workers</h3>
+            {% if top_health_workers %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Health Worker</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Appointments</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for hw in top_health_workers %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ hw.healthworker__first_name }} {{ hw.healthworker__last_name }}</td>
+                            <td class="px-4 py-3 text-sm font-semibold text-gray-900">{{ hw.appointment_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-user-heart-line text-4xl mb-2"></i>
+                <p class="text-sm">No appointment assignments yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Upcoming Events -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Awareness Events</h3>
+            {% if upcoming_events %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for event in upcoming_events %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ event.title }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ event.event_date|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-megaphone-line text-4xl mb-2"></i>
+                <p class="text-sm">No upcoming events</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Recent Documents -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Documents</h3>
+            {% if recent_documents %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Uploaded By</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for doc in recent_documents %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ doc.title|truncatewords:5 }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ doc.uploaded_by.username }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ doc.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-file-text-line text-4xl mb-2"></i>
+                <p class="text-sm">No documents uploaded yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+    
+</div>
+
+<script>
+    // Chart.js Configuration
+    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    Chart.defaults.color = '#6b7280';
+    
+    // Parse JSON data safely
+    const appointmentTrendData = JSON.parse('{{ appointment_trend|safe|default:"[]" }}' || '[]');
+    const chatTrendData = JSON.parse('{{ chat_trend|safe|default:"[]" }}' || '[]');
+    
+    // Appointment Trend Chart
+    const appointmentCtx = document.getElementById('appointmentTrendChart').getContext('2d');
+    new Chart(appointmentCtx, {
+        type: 'line',
+        data: {
+            labels: appointmentTrendData.map(item => item.date),
+            datasets: [{
+                label: 'Appointments',
+                data: appointmentTrendData.map(item => item.count),
+                borderColor: '#9333ea',
+                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+    
+    // Chat Trend Chart
+    const chatCtx = document.getElementById('chatTrendChart').getContext('2d');
+    new Chart(chatCtx, {
+        type: 'bar',
+        data: {
+            labels: chatTrendData.map(item => item.date),
+            datasets: [{
+                label: 'Chats',
+                data: chatTrendData.map(item => item.count),
+                backgroundColor: '#10b981',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+    
+    // Appointment Status Chart
+    const statusCtx = document.getElementById('appointmentStatusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Approved', 'Completed', 'Cancelled'],
+            datasets: [{
+                data: [
+                    {{ pending_appointments|default:0 }},
+                    {{ approved_appointments|default:0 }},
+                    {{ completed_appointments|default:0 }},
+                    {{ cancelled_appointments|default:0 }}
+                ],
+                backgroundColor: ['#eab308', '#3b82f6', '#10b981', '#ef4444'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+    
+    // User Role Chart
+    const roleCtx = document.getElementById('userRoleChart').getContext('2d');
+    new Chart(roleCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Villagers', 'Health Workers', 'Admins'],
+            datasets: [{
+                data: [
+                    {{ villagers_count|default:0 }},
+                    {{ health_workers_count|default:0 }},
+                    {{ admins_count|default:0 }}
+                ],
+                backgroundColor: ['#3b82f6', '#9333ea', '#ec4899'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

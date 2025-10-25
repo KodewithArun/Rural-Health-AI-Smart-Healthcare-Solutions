@@ -216,14 +216,91 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 UNFOLD = {
     "SITE_HEADER": "Rural Health AI Support System",
     "SITE_TITLE": "Health Admin",
-    "SITE_INDEX_TITLE": "Welcome to the Rural Health AI Support System",
-    "SITE_URL": "/",
+    "SITE_INDEX_TITLE": "Dashboard & Analytics",
+    "SITE_URL": "/admin/dashboard/",
     "THEME": {
-        "color": "blue",  # available: blue, indigo, teal, emerald, etc.
-        "dark_mode": True,
+        "color": "blue",
+        "dark_mode": False,
     },
     
-    # dont show this Authentication and Authorization models in admin
+    # Sidebar navigation
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": "📊 Dashboard",
+                "separator": False,
+                "collapsible": False,
+                "items": [
+                    {
+                        "title": "Analytics Dashboard",
+                        "icon": "insert_chart",
+                        "link": "/admin/dashboard/",
+                        "badge": "new",
+                    },
+                ],
+            },
+            {
+                "title": "👥 User Management",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "All Users",
+                        "icon": "people",
+                        "link": "/admin/accounts/account/",
+                    },
+                    {
+                        "title": "Health Workers",
+                        "icon": "medical_services",
+                        "link": "/admin/accounts/healthworker/",
+                    },
+                ],
+            },
+            {
+                "title": "🏥 Healthcare Services",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Appointments",
+                        "icon": "event",
+                        "link": "/admin/appointments/appointment/",
+                    },
+                    {
+                        "title": "Chat History",
+                        "icon": "chat",
+                        "link": "/admin/chat/chathistory/",
+                    },
+                    {
+                        "title": "Documents",
+                        "icon": "description",
+                        "link": "/admin/documents/document/",
+                    },
+                ],
+            },
+            {
+                "title": "📢 Communications",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Contact Enquiries",
+                        "icon": "email",
+                        "link": "/admin/contact/contactenquiry/",
+                    },
+                    {
+                        "title": "Awareness Campaigns",
+                        "icon": "campaign",
+                        "link": "/admin/awareness/awareness/",
+                    },
+                ],
+            },
+        ],
+    },
+    
+    # Hide default Authentication and Authorization models
     "HIDE_MODELS": [
         "auth.User",
         "auth.Group",
