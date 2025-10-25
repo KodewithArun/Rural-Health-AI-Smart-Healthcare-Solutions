@@ -1,10 +1,26 @@
 # from django.contrib import admin
 from unfold.admin import ModelAdmin
 from django.contrib import admin
+from django import forms
 from .models import Appointment
+from accounts.models import Account as User
+
+
+class AppointmentAdminForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter healthworker to show only users with health_worker role
+        if 'healthworker' in self.fields:
+            self.fields['healthworker'].queryset = User.objects.filter(role='health_worker')
+
 
 @admin.register(Appointment)
 class AppointmentAdmin(ModelAdmin):
+    form = AppointmentAdminForm
     list_display = (
         'villager', 'healthworker', 'date', 'time', 
         'status', 'token', 'created_at'
@@ -15,7 +31,7 @@ class AppointmentAdmin(ModelAdmin):
         'healthworker__username', 'healthworker__email',
         'reason', 'token'
     )
-    readonly_fields = ('token', 'created_at')
+    readonly_fields = ('villager', 'token', 'created_at')
     ordering = ('-created_at',)
     
     fieldsets = (

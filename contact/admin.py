@@ -1,12 +1,27 @@
 # from django.contrib import admin
 from unfold.admin import ModelAdmin
 from django.contrib import admin
+from django import forms
 from .models import ContactEnquiry
 from .utils import send_response_to_user
+from accounts.models import Account as User
+
+
+class ContactEnquiryAdminForm(forms.ModelForm):
+    class Meta:
+        model = ContactEnquiry
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter responded_by to show only users with admin role
+        if 'responded_by' in self.fields:
+            self.fields['responded_by'].queryset = User.objects.filter(role='admin')
 
 
 @admin.register(ContactEnquiry)
 class ContactEnquiryAdmin(ModelAdmin):
+    form = ContactEnquiryAdminForm
     list_display = ('first_name', 'last_name', 'email', 'phone', 'status', 'created_at')
     list_filter = ('status', 'created_at', 'updated_at')
     search_fields = ('first_name', 'last_name', 'email', 'phone', 'message')
