@@ -10,6 +10,12 @@ class Appointment(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
+    PRIORITY_CHOICES = [
+        ('critical', 'Critical'),
+        ('medium', 'Medium'),
+        ('normal', 'Normal'),
+    ]
+
     villager = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -25,6 +31,11 @@ class Appointment(models.Model):
     date = models.DateField()
     time = models.TimeField()
     reason = models.TextField()
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default='normal'
+    )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -42,4 +53,5 @@ class Appointment(models.Model):
         return f"Appointment for {self.villager.username} on {self.date}"
 
     class Meta:
-        ordering = ['-created_at']
+        # Don't use default ordering - priority queue handles sorting
+        ordering = []

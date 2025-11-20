@@ -5,7 +5,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import Appointment
 from .forms import AppointmentForm, AppointmentUpdateForm
-from .utils import send_appointment_email
+from .utils import send_appointment_email, classify_appointment_priority, get_prioritized_appointments
 
 # User role checks
 def is_villager(user):
@@ -29,28 +29,56 @@ def can_access_appointment(user, appointment):
 def appointment_list(request):
     if is_villager(request.user):
         appointments = Appointment.objects.filter(villager=request.user)
+        # Sort villager appointments by priority too (they can see urgency)
+        appointments = get_prioritized_appointments(appointments)
+        # Add can_cancel attribute after sorting (works on list)
         for appt in appointments:
             appt.can_cancel = can_villager_cancel(appt)
     elif is_health_worker(request.user):
         appointments = Appointment.objects.filter(healthworker=request.user)
+        # Sort appointments by priority using the priority queue
+        appointments = get_prioritized_appointments(appointments)
     elif is_admin(request.user):
         appointments = Appointment.objects.all()
+        # Sort appointments by priority for admin view as well
+        appointments = get_prioritized_appointments(appointments)
     else:
         return HttpResponseForbidden()
     
     # Calculate statistics
     today = timezone.now().date()
-    total_count = appointments.count()
-    pending_count = appointments.filter(status='pending').count()
-    approved_count = appointments.filter(status='approved').count()
-    completed_count = appointments.filter(status='completed').count()
-    cancelled_count = appointments.filter(status='cancelled').count()
     
-    # Upcoming appointments (future dates with pending or approved status)
-    upcoming_count = appointments.filter(
-        date__gte=today,
-        status__in=['pending', 'approved']
-    ).count()
+    # Convert to list if it's already a list from priority queue
+    if isinstance(appointments, list):
+        total_count = len(appointments)
+        pending_count = len([a for a in appointments if a.status == 'pending'])
+        approved_count = len([a for a in appointments if a.status == 'approved'])
+        completed_count = len([a for a in appointments if a.status == 'completed'])
+        cancelled_count = len([a for a in appointments if a.status == 'cancelled'])
+        upcoming_count = len([a for a in appointments if a.date >= today and a.status in ['pending', 'approved']])
+        
+        # Count by priority
+        critical_count = len([a for a in appointments if a.priority == 'critical'])
+        medium_count = len([a for a in appointments if a.priority == 'medium'])
+        normal_count = len([a for a in appointments if a.priority == 'normal'])
+    else:
+        # QuerySet
+        total_count = appointments.count()
+        pending_count = appointments.filter(status='pending').count()
+        approved_count = appointments.filter(status='approved').count()
+        completed_count = appointments.filter(status='completed').count()
+        cancelled_count = appointments.filter(status='cancelled').count()
+        
+        # Upcoming appointments (future dates with pending or approved status)
+        upcoming_count = appointments.filter(
+            date__gte=today,
+            status__in=['pending', 'approved']
+        ).count()
+        
+        # Count by priority
+        critical_count = appointments.filter(priority='critical').count()
+        medium_count = appointments.filter(priority='medium').count()
+        normal_count = appointments.filter(priority='normal').count()
     
     context = {
         'appointments': appointments,
@@ -60,6 +88,9 @@ def appointment_list(request):
         'completed_count': completed_count,
         'cancelled_count': cancelled_count,
         'upcoming_count': upcoming_count,
+        'critical_count': critical_count,
+        'medium_count': medium_count,
+        'normal_count': normal_count,
     }
     
     return render(request, 'appointments/appointment_list.html', context)
@@ -94,6 +125,11 @@ def appointment_create(request):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.villager = request.user
+            
+            # Classify appointment priority using AI
+            reason = form.cleaned_data.get('reason', '')
+            appointment.priority = classify_appointment_priority(reason)
+            
             appointment.save()
             send_appointment_email(appointment, created=True)
             return redirect('appointments:list')

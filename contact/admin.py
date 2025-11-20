@@ -1,5 +1,4 @@
 # from django.contrib import admin
-from unfold.admin import ModelAdmin
 from django.contrib import admin
 from django import forms
 from .models import ContactEnquiry
@@ -20,7 +19,7 @@ class ContactEnquiryAdminForm(forms.ModelForm):
 
 
 @admin.register(ContactEnquiry)
-class ContactEnquiryAdmin(ModelAdmin):
+class ContactEnquiryAdmin(admin.ModelAdmin):
     form = ContactEnquiryAdminForm
     list_display = ('first_name', 'last_name', 'email', 'phone', 'status', 'created_at')
     list_filter = ('status', 'created_at', 'updated_at')

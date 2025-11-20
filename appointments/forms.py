@@ -6,10 +6,11 @@ from .models import Appointment
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['date', 'time', 'reason', 'healthworker']
+        fields = ['date', 'time', 'reason', 'healthworker', 'priority']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
+            'priority': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -22,6 +23,10 @@ class AppointmentForm(forms.ModelForm):
                     health_profile__availability=True
                 )
         self.fields['date'].widget.attrs['min'] = date.today().isoformat()
+        
+        # Set default priority value for hidden field
+        if not self.instance.pk:
+            self.fields['priority'].initial = 'normal'
 
     def clean_date(self):
         appointment_date = self.cleaned_data.get('date')
@@ -45,7 +50,7 @@ class AppointmentForm(forms.ModelForm):
 class AppointmentUpdateForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['date', 'time', 'reason', 'healthworker', 'status', 'note']  # added note
+        fields = ['date', 'time', 'reason', 'healthworker', 'priority', 'status', 'note']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
@@ -58,4 +63,7 @@ class AppointmentUpdateForm(forms.ModelForm):
         if user:
             self.fields['healthworker'].queryset = \
                 self.fields['healthworker'].queryset.filter(role='health_worker')
+        
+        # Add helpful labels for priority field
+        self.fields['priority'].help_text = 'AI-classified priority. Can be manually adjusted if needed.'
 

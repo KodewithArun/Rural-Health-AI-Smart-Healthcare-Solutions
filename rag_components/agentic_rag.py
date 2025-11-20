@@ -36,62 +36,132 @@ class GraphState(TypedDict):
 
 # --- Prompt Templates ---
 CLASSIFICATION_PROMPT_TEMPLATE = """
-You are a question classifier. Your task is to determine the category of the user's question.
-The categories are: "greeting", "health", or "off_topic".
+You are an intelligent medical query classifier for a Rural Health Assistant system.
 
-- "greeting": For simple hellos, goodbyes, or salutations.
-- "health": For any question related to health, medical advice, symptoms, treatments, wellness, or rural health topics so that the Rural Health Assistant can provide relevant information based on its knowledge base.
-- "off_topic": For any question that is not a greeting and not related to health.
+## Objective
+Accurately categorize user queries to ensure optimal routing and response quality.
 
-User Question:
+## Classification Categories
+
+### 1. greeting
+Social interactions including:
+1. Salutations (hello, hi, good morning, namaste)
+2. Farewells (goodbye, bye, see you, take care)
+3. Courtesy expressions (thank you, thanks, you're welcome)
+4. Simple acknowledgments without substantive health content
+
+### 2. health
+All healthcare-related queries including:
+1. Symptoms and diagnosis inquiries
+2. Disease information and pathophysiology
+3. Treatment options and medication queries
+4. Preventive care and wellness advice
+5. Nutrition and lifestyle recommendations
+6. Mental health and psychological wellbeing
+7. Maternal and child health
+8. Rural health challenges and accessibility
+9. Traditional medicine and remedies
+10. Healthcare facility information
+11. Medical terminology clarification
+
+### 3. off_topic
+Non-health queries including:
+1. General knowledge questions
+2. Technical support or system queries
+3. Unrelated personal matters
+4. Non-medical recreational topics
+
+## Analysis Guidelines
+1. Prioritize health classification when query has ANY medical context
+2. Consider implicit health concerns (e.g., "feeling tired" → health)
+3. Mixed queries default to their primary intent
+
+---
+
+**User Question:**
 {question}
 
-Based on the question, what is the single most appropriate category? (greeting, health, or off_topic)
-Category:
+**Classification (respond with exactly one word: greeting, health, or off_topic):**
 """
 
 RAG_PROMPT_TEMPLATE = """
-You are a helpful health assistant. Give a clear, short answer.
+You are a **Rural Health Medical Assistant** providing evidence-based health information to underserved communities.
+
+**Professional Standards:**
+- Provide accurate, contextually-grounded medical information
+- Use clear, accessible language appropriate for non-medical audiences
+- Maintain clinical accuracy while avoiding medical jargon
+- Prioritize patient safety and appropriate care-seeking behavior
 
 {chat_history_section}
 
-Context: {context}
+**Knowledge Base Context:**
+{context}
 
-Question: {question}
+**Patient Query:**
+{question}
 
-Instructions:
-- Keep your answer SHORT - maximum 4-5 sentences
-- Get straight to the point
-- Use 2-3 bullet points if listing things
-- Don't repeat the question back
-- Don't say "I'm sorry to hear" or give long sympathy statements
-- If context is not enough, say: "I don't have enough details to answer this properly."
-- End with: "For proper diagnosis, consult a healthcare professional."
-- No extra fluff or unnecessary explanations
+**Response Guidelines:**
 
-Answer:
+1. **Brevity & Clarity:** Limit response to 4-5 concise sentences maximum
+2. **Evidence-Based:** Use ONLY information from the provided context
+3. **Structured Format:** Use bullet points for lists or multiple points
+4. **Direct Communication:**
+   - No question repetition
+   - No unnecessary sympathy phrases
+   - No speculative information
+5. **Safety Protocol:** 
+   - If context is insufficient: "I don't have enough information in my knowledge base to answer this accurately."
+   - Always conclude with: "**For proper diagnosis and treatment, please consult a qualified healthcare professional.**"
+6. **Actionable Guidance:** When possible, include one practical self-care or prevention tip
+
+**Response:**
 """
 
 IMPROVED_FALLBACK_PROMPT_TEMPLATE = """
-You are a helpful health assistant. Give a clear, short answer.
+You are a **Rural Health Medical Assistant** with access to supplementary web-based medical information.
+
+**Context:** Your primary knowledge base was insufficient, so you're now synthesizing information from reliable web sources.
 
 {chat_history_section}
 
-Question: {question}
+## Patient Query
+{question}
 
-Information available:
+## External Medical Information
 {context}
 
-Instructions:
-- Keep your answer SHORT - maximum 4-5 sentences
-- Get straight to the point
-- Use 2-3 bullet points if listing things
-- Don't repeat the question back
-- Don't say "I'm sorry to hear" or give long sympathy statements
-- End with: "For proper diagnosis, consult a healthcare professional."
-- No extra fluff or unnecessary explanations
+---
 
-Answer:
+## Response Protocol
+
+1. **Information Synthesis**
+   - Synthesize web-sourced medical information accurately
+   - Verify consistency before presenting findings
+   - Acknowledge when information may be general/preliminary
+
+2. **Brevity & Precision**
+   - Maximum 4-5 sentences
+
+3. **Structured Presentation**
+   - Use numbered lists (1, 2, 3) or bullet points for clarity when listing information
+   - Focus on most relevant, actionable information
+
+4. **Professional Standards**
+   - No question repetition or filler language
+   - Direct, concise medical communication
+   - Plain language accessibility
+
+5. **Safety First**
+   - Mandatory closing: "**For accurate diagnosis and personalized treatment, please consult a healthcare professional.**"
+   - Emphasize the importance of professional medical evaluation
+
+6. **Transparency**
+   - If web information is limited or unclear, state: "The available information is limited. Please seek professional medical advice."
+
+---
+
+**Response:**
 """
 
 # --- Nodes ---
@@ -229,23 +299,43 @@ def generate_fallback_answer(state: GraphState) -> GraphState:
     return {**state, "generation": generation, "sources": [{"title": "Web Search", "content": "Answer generated from web search results."}]}
 
 def handle_greeting(state: GraphState) -> GraphState:
-    """Node to handle simple greetings."""
+    """Node to handle simple greetings with professional warmth."""
     print("---NODE: HANDLE GREETING---")
     user_name = state.get("user_name", "")
     chat_history = state.get("chat_history", "")
     
-    # Personalized greeting based on history
+    # Personalized professional greeting based on conversation context
+    name_part = f" {user_name}" if user_name else ""
+    
     if chat_history and "No previous conversation" not in chat_history:
-        greeting = f"Hello{' ' + user_name if user_name else ''}! 👋 Good to see you again! I'm here to help with any health questions you have. What would you like to know?"
+        greeting = (
+            f"Hello{name_part}! 👋 Welcome back. I'm here to continue supporting your health and wellness journey. "
+            f"How can I assist you today?"
+        )
     else:
-        greeting = f"Hello{' ' + user_name if user_name else ''}! 👋 I'm your Rural Health Assistant. I'm here to answer your health questions and provide helpful information. What can I help you with today?"
+        greeting = (
+            f"Hello{name_part}! 👋 I'm your **Rural Health Medical Assistant**, here to provide evidence-based health information "
+            f"and guidance. I can help with symptoms, conditions, prevention, wellness, and connecting you to appropriate care. "
+            f"What health topic would you like to explore?"
+        )
     
     return {**state, "generation": greeting, "sources": []}
 
 def handle_off_topic(state: GraphState) -> GraphState:
-    """Node to handle off-topic questions."""
+    """Node to handle off-topic questions with professional redirection."""
     print("---NODE: HANDLE OFF-TOPIC---")
-    return {**state, "generation": "I specialize in health and wellness topics. 😊 I'd love to help you with questions about symptoms, treatments, prevention, or any health concerns. What health topic are you curious about?", "sources": []}
+    response = (
+        "I'm a specialized **Rural Health Medical Assistant** focused exclusively on health and medical topics. 🏥\n\n"
+        "## I can assist you with:\n"
+        "1. Symptoms and health conditions\n"
+        "2. Disease prevention and wellness\n"
+        "3. Treatment options and medications\n"
+        "4. Nutrition and healthy lifestyle\n"
+        "5. Maternal and child health\n"
+        "6. Mental health and wellbeing\n\n"
+        "What health-related question can I help you with today?"
+    )
+    return {**state, "generation": response, "sources": []}
 
 # --- Conditional Edges ---
 def route_question(state: GraphState) -> str:

@@ -1,10 +1,9 @@
 # from django.contrib import admin
-from unfold.admin import ModelAdmin
 from django.contrib import admin
 from .models import ChatHistory
 
 @admin.register(ChatHistory)
-class ChatHistoryAdmin(ModelAdmin):
+class ChatHistoryAdmin(admin.ModelAdmin):
     list_display = ("user", "get_question_preview", "get_answer_preview", "timestamp")
     search_fields = ("user__username", "question", "answer")
     list_filter = ("timestamp",)

@@ -21,6 +21,16 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between flex-wrap gap-4">
                         <div>
+                            <p class="text-xs text-gray-500 mb-2">Priority Level</p>
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-bold border
+                                {% if appointment.priority == 'critical' %}bg-red-50 text-red-700 border-red-300
+                                {% elif appointment.priority == 'medium' %}bg-orange-50 text-orange-700 border-orange-300
+                                {% else %}bg-green-50 text-green-700 border-green-300{% endif %}">
+                                <i class="{% if appointment.priority == 'critical' %}ri-alert-fill{% elif appointment.priority == 'medium' %}ri-notification-3-fill{% else %}ri-check-line{% endif %} mr-2"></i>
+                                {{ appointment.get_priority_display|upper }}
+                            </span>
+                        </div>
+                        <div>
                             <p class="text-xs text-gray-500 mb-2">Status</p>
                             <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium
                                 {% if appointment.status == 'pending' %}bg-yellow-100 text-yellow-800

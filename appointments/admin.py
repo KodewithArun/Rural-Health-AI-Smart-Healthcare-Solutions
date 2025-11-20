@@ -1,5 +1,4 @@
 # from django.contrib import admin
-from unfold.admin import ModelAdmin
 from django.contrib import admin
 from django import forms
 from .models import Appointment
@@ -10,6 +9,10 @@ class AppointmentAdminForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields = '__all__'
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}),
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,7 +22,7 @@ class AppointmentAdminForm(forms.ModelForm):
 
 
 @admin.register(Appointment)
-class AppointmentAdmin(ModelAdmin):
+class AppointmentAdmin(admin.ModelAdmin):
     form = AppointmentAdminForm
     list_display = (
         'villager', 'healthworker', 'date', 'time', 

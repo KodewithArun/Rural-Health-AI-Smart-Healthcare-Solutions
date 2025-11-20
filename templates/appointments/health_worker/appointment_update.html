@@ -60,6 +60,22 @@
                 {% csrf_token %}
                 
                 <div class="space-y-6">
+                    <!-- Priority Field -->
+                    <div>
+                        <label for="id_priority" class="block text-sm font-medium text-gray-700 mb-2">
+                            Priority <span class="text-red-600">*</span>
+                        </label>
+                        {{ form.priority }}
+                        {% if form.priority.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.priority.help_text }}</p>
+                        {% endif %}
+                        {% if form.priority.errors %}
+                            {% for error in form.priority.errors %}
+                                <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
                     <!-- Status Field -->
                     <div>
                         <label for="id_status" class="block text-sm font-medium text-gray-700 mb-2">
@@ -117,7 +133,7 @@
                 </div>
 
                 <style>
-                    #id_status, #id_date, #id_time {
+                    #id_priority, #id_status, #id_date, #id_time {
                         width: 100%;
                         padding: 0.625rem 0.75rem;
                         border: 1px solid #d1d5db;
@@ -126,7 +142,7 @@
                         transition: border-color 0.15s ease;
                         background-color: white;
                     }
-                    #id_status:focus, #id_date:focus, #id_time:focus {
+                    #id_priority:focus, #id_status:focus, #id_date:focus, #id_time:focus {
                         outline: none;
                         border-color: #2563eb;
                         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -150,25 +166,47 @@
                     }
                 </style>
 
-                <!-- Status Legend -->
-                <div class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded">
-                    <p class="text-xs font-medium text-gray-900 mb-3">Status Information</p>
-                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-700">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                            <span>Pending: Awaiting confirmation</span>
+                <!-- Priority & Status Legends -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Priority Legend -->
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded">
+                        <p class="text-xs font-medium text-gray-900 mb-3">Priority Levels</p>
+                        <div class="space-y-2 text-xs text-gray-700">
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                <span>Critical: Life-threatening, urgent care</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                                <span>Medium: Prompt attention needed</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                <span>Normal: Routine care, non-urgent</span>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                            <span>Approved: Confirmed appointment</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                            <span>Completed: Finished consultation</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                            <span>Cancelled: Appointment cancelled</span>
+                    </div>
+                    
+                    <!-- Status Legend -->
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded">
+                        <p class="text-xs font-medium text-gray-900 mb-3">Status Information</p>
+                        <div class="space-y-2 text-xs text-gray-700">
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                                <span>Pending: Awaiting confirmation</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                <span>Approved: Confirmed</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                <span>Completed: Finished</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                <span>Cancelled: Cancelled</span>
+                            </div>
                         </div>
                     </div>
                 </div>
