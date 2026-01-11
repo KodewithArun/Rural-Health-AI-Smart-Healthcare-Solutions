@@ -1,0 +1,276 @@
+{% extends "custom_admin/base.html" %} {% load form_tags %} {% block content %}
+<div class="max-w-3xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Create Health Worker</h2>
+        <p class="text-sm text-gray-600 mt-1">
+          Add a new health worker with professional details
+        </p>
+      </div>
+      <a
+        href="{% url 'custom_admin:user_list' %}"
+        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+      >
+        <i class="ri-arrow-left-line mr-2"></i>Back
+      </a>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <form method="post" id="healthWorkerForm" novalidate>
+      {% csrf_token %} {% if form.non_field_errors %}
+      <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <h3 class="text-sm font-semibold text-red-800 mb-2">
+          <i class="ri-error-warning-line mr-2"></i>Form Errors:
+        </h3>
+        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+          {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Basic Information -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+          <i class="ri-user-line mr-2"></i>Basic Information
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Username -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Username *
+              <span class="text-xs text-gray-500">(letters, numbers)</span>
+            </label>
+            {{ form.username }} {% field_errors form.username %}
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Email * <span class="text-xs text-gray-500">(Gmail only)</span>
+            </label>
+            {{ form.email }} {% field_errors form.email %}
+          </div>
+
+          <!-- First Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              First Name *
+              <span class="text-xs text-gray-500">(letters only)</span>
+            </label>
+            {{ form.first_name }} {% field_errors form.first_name %}
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Last Name *
+              <span class="text-xs text-gray-500">(letters only)</span>
+            </label>
+            {{ form.last_name }} {% field_errors form.last_name %}
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number *
+              <span class="text-xs text-gray-500">(98/97 + 8 digits)</span>
+            </label>
+            {{ form.phone_number }} {% field_errors form.phone_number %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Information -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+          <i class="ri-stethoscope-line mr-2"></i>Professional Information
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Specialization -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Specialization *</label
+            >
+              <select name="specialization" class="form-control block w-full px-3 py-2 border border-red-500 rounded-lg text-sm focus:outline-none focus:border-gray-00">
+                {% for value, label in form.fields.specialization.choices %}
+                  <option value="{{ value }}" {% if form.specialization.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% field_errors form.specialization %}
+          </div>
+
+          <!-- Experience -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Years of Experience *
+              <span class="text-xs text-gray-500">(0–25)</span>
+            </label>
+            {{ form.experience_years }} {% field_errors form.experience_years %}
+          </div>
+
+          <!-- Qualification -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Qualification *</label
+            >
+              <select name="qualification" class="form-control block w-full px-3 py-2 border border-red-500 rounded-lg text-sm focus:outline-none focus:border-gray-700">
+                {% for value, label in form.fields.qualification.choices %}
+                  <option value="{{ value }}" {% if form.qualification.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              {% field_errors form.qualification %}
+          </div>
+
+          <!-- Availability -->
+          <div class="md:col-span-2">
+            <div class="flex items-center">
+              {{ form.availability }}
+              <label class="ml-2 text-sm font-medium text-gray-700">
+                Available for Appointments
+              </label>
+            </div>
+            {% field_errors form.availability %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+          <i class="ri-lock-line mr-2"></i>Password
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Password 1 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Password *</label
+            >
+            {{ form.password1 }} {% field_errors form.password1 %}
+            <p class="text-xs text-gray-500 mt-1">
+              Min 8 characters with letters & numbers
+            </p>
+          </div>
+
+          <!-- Password 2 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Confirm Password *</label
+            >
+            {{ form.password2 }} {% field_errors form.password2 %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-4 pt-6 border-t">
+        <button
+          type="submit"
+          class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 hover:shadow-lg font-medium"
+        >
+          <i class="ri-save-line mr-2"></i>Create Health Worker
+        </button>
+        <a
+          href="{% url 'custom_admin:user_list' %}"
+          class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+        >
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  textarea {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+  }
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #9333ea;
+    box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+  }
+  input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+  }
+  input:invalid {
+    border-color: #ef4444;
+  }
+  input:valid {
+    border-color: #10b981;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("healthWorkerForm");
+
+    form.addEventListener("submit", function (e) {
+      let hasError = false;
+      const inputs = form.querySelectorAll("input[required]");
+
+      inputs.forEach((input) => {
+        if (!input.value.trim()) {
+          hasError = true;
+          input.style.borderColor = "#ef4444";
+        } else {
+          input.style.borderColor = "#10b981";
+        }
+      });
+
+      if (hasError) {
+        e.preventDefault();
+        alert("Please fill in all required fields correctly.");
+      }
+    });
+
+    const phoneInput = document.querySelector('input[name="phone_number"]');
+    if (phoneInput) {
+      phoneInput.addEventListener("input", function (e) {
+        const value = e.target.value;
+        if (value.length > 10) {
+          e.target.value = value.slice(0, 10);
+        }
+        if (
+          value.length === 10 &&
+          (value.startsWith("98") || value.startsWith("97"))
+        ) {
+          e.target.style.borderColor = "#10b981";
+        } else if (value.length > 0) {
+          e.target.style.borderColor = "#ef4444";
+        }
+      });
+    }
+
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) {
+      emailInput.addEventListener("blur", function (e) {
+        if (!e.target.value.endsWith("@gmail.com")) {
+          e.target.style.borderColor = "#ef4444";
+        } else {
+          e.target.style.borderColor = "#10b981";
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:awareness_list' %}"
+    class="hover:text-purple-600"
+    >Awareness</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">{{ awareness.title }}</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="max-w-5xl mx-auto">
+  <div
+    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+  >
+    <!-- Hero Image -->
+    {% if awareness.photo %}
+    <div class="relative h-96 bg-gray-200">
+      <img
+        src="{{ awareness.photo.url }}"
+        alt="{{ awareness.title }}"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute top-4 right-4">
+        {% if awareness.is_event %}
+        <span
+          class="px-4 py-2 bg-orange-500 text-white font-semibold rounded-full shadow-lg"
+        >
+          <i class="ri-calendar-event-line mr-1"></i>Event
+        </span>
+        {% else %}
+        <span
+          class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-full shadow-lg"
+        >
+          <i class="ri-article-line mr-1"></i>Post
+        </span>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Content -->
+    <div class="p-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-4">
+        {{ awareness.title }}
+      </h1>
+
+      <div
+        class="flex items-center space-x-6 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-200"
+      >
+        <span class="flex items-center">
+          <i class="ri-time-line text-purple-600 mr-2"></i>
+          Created {{ awareness.created_at|date:"F d, Y" }}
+        </span>
+        {% if awareness.is_event and awareness.event_date %}
+        <span class="flex items-center text-purple-600 font-semibold">
+          <i class="ri-calendar-event-line mr-2"></i>
+          Event Date: {{ awareness.event_date|date:"F d, Y" }}
+        </span>
+        {% endif %}
+      </div>
+
+      <div class="prose max-w-none mb-6">
+        <p class="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">
+          {{ awareness.description }}
+        </p>
+      </div>
+
+      {% if awareness.pdf %}
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="ri-file-pdf-line text-red-600 text-4xl"></i>
+            <div>
+              <p class="font-semibold text-gray-800">PDF Attachment</p>
+              <p class="text-sm text-gray-600">
+                Additional information available
+              </p>
+            </div>
+          </div>
+          <a
+            href="{{ awareness.pdf.url }}"
+            target="_blank"
+            download
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
+          >
+            <i class="ri-download-line mr-2"></i>Download PDF
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Actions -->
+      <div class="flex items-center space-x-3 pt-6 border-t border-gray-200">
+        <a
+          href="{% url 'custom_admin:awareness_delete' awareness.id %}"
+          class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
+        >
+          <i class="ri-delete-bin-line mr-2"></i>Delete
+        </a>
+        <a
+          href="{% url 'custom_admin:awareness_list' %}"
+          class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium"
+        >
+          <i class="ri-arrow-left-line mr-2"></i>Back to List
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

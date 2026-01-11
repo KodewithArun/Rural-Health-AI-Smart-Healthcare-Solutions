@@ -5,12 +5,12 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from awareness.models import Awareness
 from contact.forms import ContactEnquiryForm
 from contact.utils import send_enquiry_notification_to_admin, send_confirmation_to_user
 import json
 from datetime import datetime
-# from django.contrib.auth.decorators import login_required
 
 def home(request):
     awareness = Awareness.objects.all().order_by('-created_at')[:6]

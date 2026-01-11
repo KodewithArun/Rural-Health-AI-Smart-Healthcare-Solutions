@@ -1,0 +1,233 @@
+{% extends 'custom_admin/base.html' %} {% load
+custom_admin.templatetags.form_tags %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:awareness_list' %}"
+    class="hover:text-purple-600"
+    >Awareness</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">Create</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">
+        Create Awareness Campaign
+      </h2>
+      <p class="text-sm text-gray-600 mt-1">
+        Share health information or create an awareness event
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Title <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="text"
+          name="{{ form.title.name }}"
+          value="{{ form.title.value|default:'' }}"
+          required
+          placeholder="Enter awareness title"
+          class="w-full px-4 py-2 border {% if form.title.errors %}border-red-300{% else %}border-gray-300{% endif %} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        />
+        {% if form.title.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Description <span class="text-red-600">*</span>
+        </label>
+        <textarea
+          name="{{ form.description.name }}"
+          rows="6"
+          required
+          placeholder="Enter detailed description..."
+          class="w-full px-4 py-2 border {% if form.description.errors %}border-red-300{% else %}border-gray-300{% endif %} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        >
+{{ form.description.value|default:'' }}</textarea
+        >
+        {% if form.description.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Photo Upload -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Photo <span class="text-red-600">*</span>
+        </label>
+        <div
+          class="border-2 border-dashed {% if form.photo.errors %}border-red-300{% else %}border-gray-300{% endif %} rounded-lg p-8 text-center hover:border-purple-400 transition"
+        >
+          <input
+            type="file"
+            name="{{ form.photo.name }}"
+            id="photo-upload"
+            required
+            accept="image/*"
+            class="hidden"
+          />
+          <label for="photo-upload" class="cursor-pointer">
+            <i class="ri-image-add-line text-5xl text-purple-600 mb-3"></i>
+            <p class="text-gray-700 font-medium">Click to upload image</p>
+            <p class="text-sm text-gray-500 mt-1">PNG, JPG, JPEG (Max 5MB)</p>
+          </label>
+          <div id="photo-preview" class="mt-3"></div>
+        </div>
+        {% if form.photo.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.photo.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- PDF Upload (Optional) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          PDF Attachment (Optional)
+        </label>
+        <div
+          class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition"
+        >
+          <input
+            type="file"
+            name="{{ form.pdf.name }}"
+            id="pdf-upload"
+            accept=".pdf"
+            class="hidden"
+          />
+          <label for="pdf-upload" class="cursor-pointer">
+            <i class="ri-file-pdf-line text-4xl text-red-600 mb-2"></i>
+            <p class="text-gray-700 font-medium">Click to upload PDF</p>
+            <p class="text-sm text-gray-500 mt-1">PDF only (Max 10MB)</p>
+          </label>
+          <div
+            id="pdf-name"
+            class="mt-2 text-sm font-semibold text-purple-600"
+          ></div>
+        </div>
+        {% if form.pdf.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.pdf.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Is Event Checkbox -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="{{ form.is_event.name }}"
+            id="is-event"
+            {%
+            if
+            form.is_event.value
+            %}checked{%
+            endif
+            %}
+            class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+          />
+          <span class="text-sm font-medium text-gray-700"
+            >This is an event</span
+          >
+        </label>
+      </div>
+
+      <!-- Event Date (shows when is_event is checked) -->
+      <div id="event-date-field" class="hidden">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Event Date
+        </label>
+        <input
+          type="date"
+          name="{{ form.event_date.name }}"
+          value="{{ form.event_date.value|default:'' }}"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        />
+        {% if form.event_date.errors %}
+        <p class="mt-1 text-sm text-red-600">{{ form.event_date.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div
+        class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200"
+      >
+        <a
+          href="{% url 'custom_admin:awareness_list' %}"
+          class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+        >
+          <i class="ri-close-line mr-2"></i>Cancel
+        </a>
+        <button
+          type="submit"
+          class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+        >
+          <i class="ri-add-line mr-2"></i>Create Awareness
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Photo preview
+  document
+    .getElementById("photo-upload")
+    .addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          document.getElementById("photo-preview").innerHTML =
+            '<img src="' +
+            event.target.result +
+            '" class="mt-3 max-h-48 rounded-lg mx-auto">';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+  // PDF name display
+  document
+    .getElementById("pdf-upload")
+    .addEventListener("change", function (e) {
+      const fileName = e.target.files[0]?.name;
+      if (fileName) {
+        document.getElementById("pdf-name").textContent = "📄 " + fileName;
+      }
+    });
+
+  // Event date toggle
+  const isEventCheckbox = document.getElementById("is-event");
+  const eventDateField = document.getElementById("event-date-field");
+
+  isEventCheckbox.addEventListener("change", function () {
+    if (this.checked) {
+      eventDateField.classList.remove("hidden");
+    } else {
+      eventDateField.classList.add("hidden");
+    }
+  });
+
+  // Check on load
+  if (isEventCheckbox.checked) {
+    eventDateField.classList.remove("hidden");
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:awareness_list' %}"
+    class="hover:text-purple-600"
+    >Awareness</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">Delete</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="max-w-2xl mx-auto">
+  <div
+    class="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="bg-red-50 border-b border-red-200 p-6">
+      <div class="flex items-center space-x-4">
+        <div
+          class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center"
+        >
+          <i class="ri-alert-line text-3xl text-red-600"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-red-800">Delete Awareness</h2>
+          <p class="text-sm text-red-600 mt-1">This action cannot be undone</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <!-- Preview -->
+      <div class="mb-6">
+        <h3 class="font-semibold text-gray-800 mb-3">Item Preview</h3>
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          {% if awareness.photo %}
+          <img
+            src="{{ awareness.photo.url }}"
+            alt="{{ awareness.title }}"
+            class="w-full h-48 object-cover"
+          />
+          {% endif %}
+          <div class="p-4 bg-gray-50">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="font-semibold text-gray-800">{{ awareness.title }}</h4>
+              {% if awareness.is_event %}
+              <span
+                class="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full"
+                >Event</span
+              >
+              {% else %}
+              <span
+                class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
+                >Post</span
+              >
+              {% endif %}
+            </div>
+            <p class="text-sm text-gray-600">
+              {{ awareness.description|truncatewords:20 }}
+            </p>
+            {% if awareness.is_event and awareness.event_date %}
+            <p class="text-xs text-purple-600 mt-2">
+              <i class="ri-calendar-line mr-1"></i>{{
+              awareness.event_date|date:"F d, Y" }}
+            </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning Message -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start space-x-3">
+          <i class="ri-error-warning-line text-yellow-600 text-2xl mt-0.5"></i>
+          <div>
+            <h4 class="font-semibold text-yellow-800 mb-2">Warning!</h4>
+            <p class="text-sm text-yellow-700">
+              Deleting this awareness item will permanently remove the photo,
+              description, and any attached PDF files. This action cannot be
+              undone.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Form -->
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <label class="flex items-start space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              class="mt-1 w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            />
+            <span class="text-sm text-gray-700">
+              I understand that this action will permanently delete
+              <strong>{{ awareness.title }}</strong> and all associated files,
+              and this action cannot be undone.
+            </span>
+          </label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end space-x-3 pt-4">
+          <a
+            href="{% url 'custom_admin:awareness_detail' awareness.id %}"
+            class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+          >
+            <i class="ri-close-line mr-2"></i>Cancel
+          </a>
+          <button
+            type="submit"
+            class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+          >
+            <i class="ri-delete-bin-line mr-2"></i>Delete Awareness
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

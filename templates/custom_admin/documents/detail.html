@@ -1,0 +1,189 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a href="{% url 'custom_admin:document_list' %}" class="hover:text-purple-600"
+    >Documents</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">{{ document.title }}</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Document Details -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Main Information -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex items-start space-x-4 flex-1">
+          <div
+            class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0"
+          >
+            <i class="ri-file-text-line text-white text-3xl"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-2xl font-bold text-gray-800 break-words">
+              {{ document.title }}
+            </h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Uploaded {{ document.created_at|date:"F d, Y - g:i A" }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <p class="text-xs text-gray-500 mb-1">File Name</p>
+          <p class="text-sm font-semibold text-gray-800 break-all">
+            {{ document.file.name|slice:"10:" }}
+          </p>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <p class="text-xs text-gray-500 mb-1">Uploaded</p>
+          <p class="text-sm font-semibold text-gray-800">
+            {{ document.created_at|date:"M d, Y" }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Uploader Information -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <i class="ri-user-line text-purple-600 mr-2"></i>
+        Uploaded By
+      </h3>
+      <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+        <div
+          class="w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-full flex items-center justify-center"
+        >
+          <span class="text-white font-bold text-lg"
+            >{{ document.uploaded_by.first_name.0 }}{{
+            document.uploaded_by.last_name.0 }}</span
+          >
+        </div>
+        <div class="flex-1">
+          <h4 class="text-lg font-bold text-gray-800">
+            {{ document.uploaded_by.get_full_name }}
+          </h4>
+          <p class="text-sm text-gray-600">{{ document.uploaded_by.email }}</p>
+          <a
+            href="{% url 'custom_admin:user_detail' document.uploaded_by.id %}"
+            class="mt-2 inline-block text-sm text-purple-600 hover:text-purple-700 font-medium"
+          >
+            View Profile <i class="ri-arrow-right-line"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    {% if document.summary %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+        <i class="ri-file-list-line text-purple-600 mr-2"></i>
+        Summary
+      </h3>
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <p class="text-gray-700 whitespace-pre-wrap">{{ document.summary }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Vector DB Info -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-start space-x-3">
+        <i class="ri-database-2-line text-blue-600 text-2xl mt-0.5"></i>
+        <div>
+          <h4 class="font-semibold text-blue-800 mb-1">AI Knowledge Base</h4>
+          <p class="text-sm text-blue-700">
+            This document has been processed and added to the AI knowledge base.
+            It will be used to provide better health assistance to users.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions Sidebar -->
+  <div class="lg:col-span-1 space-y-6">
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+      <div class="space-y-2">
+        <a
+          href="{{ document.file.url }}"
+          target="_blank"
+          download
+          class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-medium"
+        >
+          <i class="ri-download-line"></i>
+          <span>Download File</span>
+        </a>
+        <a
+          href="{{ document.file.url }}"
+          target="_blank"
+          class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium"
+        >
+          <i class="ri-external-link-line"></i>
+          <span>View File</span>
+        </a>
+        <a
+          href="{% url 'custom_admin:document_delete' document.id %}"
+          class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
+        >
+          <i class="ri-delete-bin-line"></i>
+          <span>Delete Document</span>
+        </a>
+        <a
+          href="{% url 'custom_admin:document_list' %}"
+          class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium"
+        >
+          <i class="ri-arrow-left-line"></i>
+          <span>Back to List</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Document Info -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Document Info</h3>
+      <div class="space-y-3 text-sm">
+        <div
+          class="flex items-center justify-between py-2 border-b border-gray-100"
+        >
+          <span class="text-gray-600">ID</span>
+          <span class="font-semibold text-gray-800">#{{ document.id }}</span>
+        </div>
+        <div
+          class="flex items-center justify-between py-2 border-b border-gray-100"
+        >
+          <span class="text-gray-600">Created</span>
+          <span class="font-semibold text-gray-800"
+            >{{ document.created_at|date:"M d, Y" }}</span
+          >
+        </div>
+        <div
+          class="flex items-center justify-between py-2 border-b border-gray-100"
+        >
+          <span class="text-gray-600">Updated</span>
+          <span class="font-semibold text-gray-800"
+            >{{ document.updated_at|date:"M d, Y" }}</span
+          >
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <span class="text-gray-600">Uploader</span>
+          <span class="font-semibold text-gray-800"
+            >{{ document.uploaded_by.first_name }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

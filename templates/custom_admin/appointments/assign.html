@@ -1,0 +1,157 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:appointment_list' %}"
+    class="hover:text-purple-600"
+    >Appointments</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:appointment_detail' appointment.id %}"
+    class="hover:text-purple-600"
+    >#{{ appointment.id }}</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">Assign Health Worker</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Assign Health Worker</h2>
+      <p class="text-sm text-gray-600 mt-1">
+        Select a health worker to assign to this appointment
+      </p>
+    </div>
+
+    <!-- Appointment Info -->
+    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+      <h3 class="font-semibold text-purple-800 mb-3">Appointment Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        <div>
+          <span class="text-purple-600">Patient:</span>
+          <span class="font-semibold text-gray-800 ml-2"
+            >{{ appointment.villager.get_full_name }}</span
+          >
+        </div>
+        <div>
+          <span class="text-purple-600">Date:</span>
+          <span class="font-semibold text-gray-800 ml-2"
+            >{{ appointment.date|date:"M d, Y" }}</span
+          >
+        </div>
+        <div>
+          <span class="text-purple-600">Time:</span>
+          <span class="font-semibold text-gray-800 ml-2"
+            >{{ appointment.time|time:"g:i A" }}</span
+          >
+        </div>
+        <div>
+          <span class="text-purple-600">Priority:</span>
+          <span
+            class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full {% if appointment.priority == 'critical' %}bg-red-100 text-red-700 {% elif appointment.priority == 'medium' %}bg-orange-100 text-orange-700 {% else %}bg-blue-100 text-blue-700{% endif %}"
+          >
+            {{ appointment.priority|title }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assignment Form -->
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-3"
+          >Select Health Worker</label
+        >
+
+        {% if health_workers %}
+        <div class="space-y-3 max-h-96 overflow-y-auto">
+          {% for worker in health_workers %}
+          <label
+            class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition"
+          >
+            <input
+              type="radio"
+              name="health_worker"
+              value="{{ worker.id }}"
+              required
+              class="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+            />
+            <div class="flex-1 flex items-center space-x-3">
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center"
+              >
+                <span class="text-white font-semibold"
+                  >{{ worker.first_name.0 }}{{ worker.last_name.0 }}</span
+                >
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-800">
+                  {{ worker.get_full_name }}
+                </p>
+                <p class="text-sm text-gray-600">{{ worker.email }}</p>
+                {% if worker.phone_number %}
+                <p class="text-xs text-gray-500">{{ worker.phone_number }}</p>
+                {% endif %}
+              </div>
+              <div class="text-right">
+                {% if worker.is_active %}
+                <span
+                  class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full"
+                >
+                  Available
+                </span>
+                {% else %}
+                <span
+                  class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
+                >
+                  Inactive
+                </span>
+                {% endif %}
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div
+          class="text-center py-8 text-gray-500 border border-gray-200 rounded-lg"
+        >
+          <i class="ri-user-heart-line text-4xl mb-2"></i>
+          <p class="text-sm">No active health workers available</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div
+        class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200"
+      >
+        <a
+          href="{% url 'custom_admin:appointment_detail' appointment.id %}"
+          class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+        >
+          <i class="ri-close-line mr-2"></i>Cancel
+        </a>
+        {% if health_workers %}
+        <button
+          type="submit"
+          class="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+        >
+          <i class="ri-user-add-line mr-2"></i>Assign Health Worker
+        </button>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

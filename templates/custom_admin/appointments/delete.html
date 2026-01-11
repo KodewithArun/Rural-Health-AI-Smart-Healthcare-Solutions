@@ -1,0 +1,141 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <a
+    href="{% url 'custom_admin:appointment_list' %}"
+    class="hover:text-purple-600"
+    >Appointments</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">Delete Appointment</span>
+</nav>
+{% endblock %} {% block content %}
+
+<div class="max-w-2xl mx-auto">
+  <div
+    class="bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="bg-red-50 border-b border-red-200 p-6">
+      <div class="flex items-center space-x-4">
+        <div
+          class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center"
+        >
+          <i class="ri-alert-line text-3xl text-red-600"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-red-800">Delete Appointment</h2>
+          <p class="text-sm text-red-600 mt-1">This action cannot be undone</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <!-- Appointment Details -->
+      <div class="mb-6">
+        <h3 class="font-semibold text-gray-800 mb-3">Appointment Details</h3>
+        <div class="p-4 bg-gray-50 rounded-lg space-y-3">
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Appointment ID:</span>
+            <span class="text-sm font-semibold text-gray-800"
+              >#{{ appointment.id }}</span
+            >
+          </div>
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Patient:</span>
+            <span class="text-sm font-semibold text-gray-800"
+              >{{ appointment.villager.get_full_name }}</span
+            >
+          </div>
+          {% if appointment.healthworker %}
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Health Worker:</span>
+            <span class="text-sm font-semibold text-gray-800"
+              >{{ appointment.healthworker.get_full_name }}</span
+            >
+          </div>
+          {% endif %}
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Date & Time:</span>
+            <span class="text-sm font-semibold text-gray-800"
+              >{{ appointment.date|date:"M d, Y" }} at {{
+              appointment.time|time:"g:i A" }}</span
+            >
+          </div>
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Priority:</span>
+            <span
+              class="px-2 py-1 text-xs font-medium rounded-full {% if appointment.priority == 'critical' %}bg-red-100 text-red-700 {% elif appointment.priority == 'medium' %}bg-orange-100 text-orange-700 {% else %}bg-blue-100 text-blue-700{% endif %}"
+            >
+              {{ appointment.priority|title }}
+            </span>
+          </div>
+          <div class="flex items-start justify-between">
+            <span class="text-sm text-gray-600">Status:</span>
+            <span
+              class="px-2 py-1 text-xs font-medium rounded-full {% if appointment.status == 'pending' %}bg-yellow-100 text-yellow-700 {% elif appointment.status == 'approved' %}bg-blue-100 text-blue-700 {% elif appointment.status == 'completed' %}bg-green-100 text-green-700 {% else %}bg-red-100 text-red-700{% endif %}"
+            >
+              {{ appointment.status|title }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning Message -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start space-x-3">
+          <i class="ri-error-warning-line text-yellow-600 text-2xl mt-0.5"></i>
+          <div>
+            <h4 class="font-semibold text-yellow-800 mb-2">Warning!</h4>
+            <p class="text-sm text-yellow-700">
+              Deleting this appointment will permanently remove all associated
+              data. This action cannot be undone. Please confirm that you want
+              to proceed.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Form -->
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <label class="flex items-start space-x-3 cursor-pointer">
+            <input
+              type="checkbox"
+              required
+              class="mt-1 w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            />
+            <span class="text-sm text-gray-700">
+              I understand that this action will permanently delete this
+              appointment and this action cannot be undone.
+            </span>
+          </label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end space-x-3 pt-4">
+          <a
+            href="{% url 'custom_admin:appointment_detail' appointment.id %}"
+            class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+          >
+            <i class="ri-close-line mr-2"></i>Cancel
+          </a>
+          <button
+            type="submit"
+            class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+          >
+            <i class="ri-delete-bin-line mr-2"></i>Delete Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

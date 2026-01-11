@@ -1,0 +1,239 @@
+{% extends 'custom_admin/base.html' %} {% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+  <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600"
+    >Dashboard</a
+  >
+  <span class="mx-2">/</span>
+  <span class="text-gray-800">Documents</span>
+</nav>
+{% endblock %} {% block content %}
+
+<!-- Search -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+  <form method="get" class="flex gap-4">
+    <div class="flex-1">
+      <div class="relative">
+        <input
+          type="text"
+          name="search"
+          value="{{ search|default:'' }}"
+          placeholder="Search documents by title or summary..."
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        />
+        <i class="ri-search-line absolute left-3 top-3 text-gray-400"></i>
+      </div>
+    </div>
+    <button
+      type="submit"
+      class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+    >
+      <i class="ri-search-line mr-2"></i>Search
+    </button>
+    <a
+      href="{% url 'custom_admin:document_list' %}"
+      class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+    >
+      <i class="ri-refresh-line mr-2"></i>Reset
+    </a>
+  </form>
+</div>
+
+<!-- Documents Table -->
+<div
+  class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+>
+  <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-bold text-gray-800">All Documents</h3>
+      <p class="text-sm text-gray-600 mt-1">
+        Total: {{ page_obj.paginator.count }} documents
+      </p>
+    </div>
+    <a
+      href="{% url 'custom_admin:document_create' %}"
+      class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+    >
+      <i class="ri-add-line mr-2"></i>Upload Document
+    </a>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+          >
+            Document
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+          >
+            Summary
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+          >
+            Uploaded By
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+          >
+            Date
+          </th>
+          <th
+            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        {% for document in page_obj %}
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0"
+              >
+                <i class="ri-file-text-line text-white text-xl"></i>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-800 truncate">
+                  {{ document.title }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  {{ document.file.name|slice:"10:" }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <p class="text-sm text-gray-700 truncate max-w-md">
+              {{ document.summary|truncatewords:15|default:"No summary" }}
+            </p>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center space-x-2">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center"
+              >
+                <span class="text-white font-semibold text-xs"
+                  >{{ document.uploaded_by.first_name.0 }}{{
+                  document.uploaded_by.last_name.0 }}</span
+                >
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-800">
+                  {{ document.uploaded_by.get_full_name }}
+                </p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <p class="text-sm text-gray-800">
+              {{ document.created_at|date:"M d, Y" }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ document.created_at|date:"g:i A" }}
+            </p>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end space-x-2">
+              <a
+                href="{% url 'custom_admin:document_detail' document.id %}"
+                class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                title="View Details"
+              >
+                <i class="ri-eye-line text-lg"></i>
+              </a>
+              <a
+                href="{{ document.file.url }}"
+                target="_blank"
+                class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
+                title="Download"
+              >
+                <i class="ri-download-line text-lg"></i>
+              </a>
+              <a
+                href="{% url 'custom_admin:document_delete' document.id %}"
+                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                title="Delete Document"
+              >
+                <i class="ri-delete-bin-line text-lg"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="px-6 py-12 text-center">
+            <div class="text-gray-500">
+              <i class="ri-file-text-line text-5xl mb-3"></i>
+              <p class="text-lg font-medium">No documents found</p>
+              <p class="text-sm mt-1">
+                Upload your first document to get started
+              </p>
+              <a
+                href="{% url 'custom_admin:document_create' %}"
+                class="mt-4 inline-block px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
+              >
+                <i class="ri-add-line mr-2"></i>Upload Document
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div
+    class="px-6 py-4 border-t border-gray-200 flex items-center justify-between"
+  >
+    <div class="text-sm text-gray-600">
+      Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{
+      page_obj.paginator.count }} documents
+    </div>
+    <div class="flex items-center space-x-2">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page=1{% if search %}&search={{ search }}{% endif %}"
+        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+      >
+        <i class="ri-arrow-left-double-line"></i>
+      </a>
+      <a
+        href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}"
+        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+      >
+        <i class="ri-arrow-left-s-line"></i>
+      </a>
+      {% endif %}
+
+      <span class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium">
+        {{ page_obj.number }}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}"
+        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+      >
+        <i class="ri-arrow-right-s-line"></i>
+      </a>
+      <a
+        href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}"
+        class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+      >
+        <i class="ri-arrow-right-double-line"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

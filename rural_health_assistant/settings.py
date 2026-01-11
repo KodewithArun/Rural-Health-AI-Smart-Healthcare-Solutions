@@ -38,31 +38,28 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "custom_admin",
     "accounts",
     "chat",
     "documents",
     "awareness",
     "appointments",
     "contact",
-  
-   
 ]
 
 
 CELERY_BEAT_SCHEDULE = {
-    'auto-cancel-appointments': {
-        'task': 'appointments.tasks.auto_cancel_appointments',
-        'schedule': 30.0,  # Run every 30 minutes
+    "auto-cancel-appointments": {
+        "task": "appointments.tasks.auto_cancel_appointments",
+        "schedule": 30.0,  # Run every 30 minutes
     },
 }
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # using Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-
+CELERY_BROKER_URL = "redis://localhost:6379/0"  # using Redis
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 
 MIDDLEWARE = [
@@ -95,8 +92,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "rural_health_assistant.wsgi.application"
 
 # Custom user model
-AUTH_USER_MODEL = 'accounts.Account'
-
+AUTH_USER_MODEL = "accounts.Account"
 
 
 # Database
@@ -149,7 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = BASE_DIR / "static",
+STATICFILES_DIRS = (BASE_DIR / "static",)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -157,15 +153,16 @@ STATICFILES_DIRS = BASE_DIR / "static",
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Login URLs
-LOGIN_URL = 'accounts:login'
-LOGIN_REDIRECT_URL = 'chat:index'
-LOGOUT_REDIRECT_URL = 'accounts:login'
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "chat:index"
+LOGOUT_REDIRECT_URL = "accounts:login"
 
 from dotenv import load_dotenv
+
 load_dotenv()
 # RAG Configuration
 # settings.py (add these)
@@ -174,10 +171,10 @@ RAG_CONFIG = {
     "CHUNK_SIZE": 1000,
     "CHUNK_OVERLAP": 200,
     "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
-    "LLM_MODEL": "gemini-2.5-flash",   # example, change as needed
+    "LLM_MODEL": "gemini-2.5-flash",  # example, change as needed
     "TEMPERATURE": 0,
     "MAX_TOKENS": 2048,
-    "RETRIEVER_K": 3
+    "RETRIEVER_K": 3,
 }
 
 # Ensure you have your Groq/other key if using ChatGroq:
@@ -187,9 +184,8 @@ GOOGLE_GENAI_API_KEY = os.environ.get("GOOGLE_GENAI_API_KEY", "")
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY", "")
 
 
-
 # Email Configuration
-SITE_URL = 'http://127.0.0.1:8000'
+SITE_URL = "http://127.0.0.1:8000"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -197,5 +193,3 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-

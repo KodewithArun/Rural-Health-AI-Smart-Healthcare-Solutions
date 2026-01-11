@@ -1,0 +1,267 @@
+{% extends 'custom_admin/base.html' %}
+
+{% block breadcrumbs %}
+<nav class="flex text-sm text-gray-600 mt-1">
+    <a href="{% url 'custom_admin:dashboard' %}" class="hover:text-purple-600">Dashboard</a>
+    <span class="mx-2">/</span>
+    <a href="{% url 'custom_admin:appointment_list' %}" class="hover:text-purple-600">Appointments</a>
+    <span class="mx-2">/</span>
+    <span class="text-gray-800">#{{ appointment.id }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Appointment Details Card -->
+    <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Main Information -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">Appointment #{{ appointment.id }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">Created {{ appointment.created_at|date:"F d, Y - g:i A" }}</p>
+                </div>
+                <span class="px-4 py-2 text-sm font-medium rounded-full
+                    {% if appointment.status == 'pending' %}bg-yellow-100 text-yellow-700
+                    {% elif appointment.status == 'approved' %}bg-blue-100 text-blue-700
+                    {% elif appointment.status == 'completed' %}bg-green-100 text-green-700
+                    {% else %}bg-red-100 text-red-700{% endif %}">
+                    {{ appointment.status|title }}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <p class="text-xs text-purple-600 font-medium mb-1">Appointment Date</p>
+                    <p class="text-lg font-bold text-gray-800">{{ appointment.date|date:"F d, Y" }}</p>
+                    <p class="text-sm text-gray-600">{{ appointment.date|date:"l" }}</p>
+                </div>
+                <div class="p-4 bg-indigo-50 rounded-lg">
+                    <p class="text-xs text-indigo-600 font-medium mb-1">Appointment Time</p>
+                    <p class="text-lg font-bold text-gray-800">{{ appointment.time|time:"g:i A" }}</p>
+                </div>
+                <div class="p-4 bg-orange-50 rounded-lg">
+                    <p class="text-xs text-orange-600 font-medium mb-1">Priority Level</p>
+                    <p class="text-lg font-bold text-gray-800">{{ appointment.priority|title }}</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <p class="text-xs text-blue-600 font-medium mb-1">Token</p>
+                    <p class="text-sm font-mono font-semibold text-gray-800">{{ appointment.token }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Information -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ri-user-line text-purple-600 mr-2"></i>
+                Patient Information
+            </h3>
+            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">{{ appointment.villager.first_name.0 }}{{ appointment.villager.last_name.0 }}</span>
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-lg font-bold text-gray-800">{{ appointment.villager.get_full_name }}</h4>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-at-line text-purple-600 mr-1"></i>
+                            {{ appointment.villager.username }}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-mail-line text-purple-600 mr-1"></i>
+                            {{ appointment.villager.email }}
+                        </p>
+                        {% if appointment.villager.phone_number %}
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-phone-line text-purple-600 mr-1"></i>
+                            {{ appointment.villager.phone_number }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'custom_admin:user_detail' appointment.villager.id %}" 
+                       class="mt-3 inline-block text-sm text-purple-600 hover:text-purple-700 font-medium">
+                        View Profile <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Worker Information -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                    <i class="ri-user-heart-line text-purple-600 mr-2"></i>
+                    Assigned Health Worker
+                </h3>
+                {% if not appointment.healthworker %}
+                <a href="{% url 'custom_admin:appointment_assign' appointment.id %}" 
+                   class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition font-medium">
+                    <i class="ri-user-add-line mr-1"></i>Assign Worker
+                </a>
+                {% endif %}
+            </div>
+            
+            {% if appointment.healthworker %}
+            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">{{ appointment.healthworker.first_name.0 }}{{ appointment.healthworker.last_name.0 }}</span>
+                </div>
+                <div class="flex-1">
+                    <h4 class="text-lg font-bold text-gray-800">{{ appointment.healthworker.get_full_name }}</h4>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-at-line text-purple-600 mr-1"></i>
+                            {{ appointment.healthworker.username }}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-mail-line text-purple-600 mr-1"></i>
+                            {{ appointment.healthworker.email }}
+                        </p>
+                        {% if appointment.healthworker.phone_number %}
+                        <p class="text-sm text-gray-600">
+                            <i class="ri-phone-line text-purple-600 mr-1"></i>
+                            {{ appointment.healthworker.phone_number }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'custom_admin:user_detail' appointment.healthworker.id %}" 
+                       class="mt-3 inline-block text-sm text-purple-600 hover:text-purple-700 font-medium">
+                        View Profile <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="ri-user-heart-line text-4xl mb-2"></i>
+                <p class="text-sm">No health worker assigned yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Reason for Appointment -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ri-file-text-line text-purple-600 mr-2"></i>
+                Reason for Appointment
+            </h3>
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <p class="text-gray-700 whitespace-pre-wrap">{{ appointment.reason }}</p>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        {% if appointment.note %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="ri-sticky-note-line text-purple-600 mr-2"></i>
+                Notes
+            </h3>
+            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p class="text-gray-700 whitespace-pre-wrap">{{ appointment.note }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Actions Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+            <div class="space-y-2">
+                {% if not appointment.healthworker %}
+                <a href="{% url 'custom_admin:appointment_assign' appointment.id %}" 
+                   class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium">
+                    <i class="ri-user-add-line"></i>
+                    <span>Assign Health Worker</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'custom_admin:appointment_delete' appointment.id %}" 
+                   class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">
+                    <i class="ri-delete-bin-line"></i>
+                    <span>Delete Appointment</span>
+                </a>
+                <a href="{% url 'custom_admin:appointment_list' %}" 
+                   class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium">
+                    <i class="ri-arrow-left-line"></i>
+                    <span>Back to List</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Update Status -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Update Status</h3>
+            <form method="post" action="{% url 'custom_admin:appointment_update_status' appointment.id %}">
+                {% csrf_token %}
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select name="status" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="approved" {% if appointment.status == 'approved' %}selected{% endif %}>Approved</option>
+                            <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Add Note (Optional)</label>
+                        <textarea name="note" 
+                                  rows="3"
+                                  placeholder="Add any notes or comments..."
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">{{ appointment.note }}</textarea>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium">
+                        <i class="ri-save-line mr-2"></i>Update Status
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Appointment Info -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Appointment Info</h3>
+            <div class="space-y-3 text-sm">
+                <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">ID</span>
+                    <span class="font-semibold text-gray-800">#{{ appointment.id }}</span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Status</span>
+                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                        {% if appointment.status == 'pending' %}bg-yellow-100 text-yellow-700
+                        {% elif appointment.status == 'approved' %}bg-blue-100 text-blue-700
+                        {% elif appointment.status == 'completed' %}bg-green-100 text-green-700
+                        {% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ appointment.status|title }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Priority</span>
+                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                        {% if appointment.priority == 'critical' %}bg-red-100 text-red-700
+                        {% elif appointment.priority == 'medium' %}bg-orange-100 text-orange-700
+                        {% else %}bg-blue-100 text-blue-700{% endif %}">
+                        {{ appointment.priority|title }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Created</span>
+                    <span class="font-semibold text-gray-800">{{ appointment.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
