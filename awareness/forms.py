@@ -88,3 +88,24 @@ class AwarenessForm(forms.ModelForm):
             if ext != "pdf":
                 raise forms.ValidationError("Only PDF files are allowed.")
         return pdf
+
+    def clean_event_date(self):
+        event_date = self.cleaned_data.get("event_date")
+        if event_date:
+            from datetime import date
+
+            if event_date < date.today():
+                raise forms.ValidationError("Event date cannot be in the past.")
+        return event_date
+
+    def clean(self):
+        cleaned_data = super().clean()
+        is_event = cleaned_data.get("is_event")
+        event_date = cleaned_data.get("event_date")
+
+        if is_event and not event_date:
+            self.add_error(
+                "event_date", "Event date is required when marking as an event."
+            )
+
+        return cleaned_data

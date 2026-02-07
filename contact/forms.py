@@ -55,13 +55,19 @@ class ContactEnquiryForm(forms.ModelForm):
 
     def clean_first_name(self):
         first_name = self.cleaned_data.get("first_name")
-        if first_name and not first_name.replace(" ", "").isalpha():
+        if not first_name or not first_name.strip():
+            raise forms.ValidationError("First name is required.")
+        first_name = first_name.strip()
+        if not first_name.replace(" ", "").isalpha():
             raise forms.ValidationError("First name must contain only letters.")
         return first_name
 
     def clean_last_name(self):
         last_name = self.cleaned_data.get("last_name")
-        if last_name and not last_name.replace(" ", "").isalpha():
+        if not last_name or not last_name.strip():
+            raise forms.ValidationError("Last name is required.")
+        last_name = last_name.strip()
+        if not last_name.replace(" ", "").isalpha():
             raise forms.ValidationError("Last name must contain only letters.")
         return last_name
 
@@ -103,3 +109,22 @@ class AdminResponseForm(forms.ModelForm):
                 }
             ),
         }
+
+    def clean_admin_response(self):
+        response = self.cleaned_data.get("admin_response")
+        if response:
+            response = response.strip()
+        return response or ""
+
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data.get("status")
+        admin_response = cleaned_data.get("admin_response")
+
+        if status in ["in_progress", "resolved"] and not admin_response:
+            self.add_error(
+                "admin_response",
+                "A response is required when updating status to In Progress or Resolved.",
+            )
+
+        return cleaned_data

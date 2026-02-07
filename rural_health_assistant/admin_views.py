@@ -11,6 +11,7 @@ from datetime import timedelta, datetime
 from accounts.models import Account, HealthWorkerProfile
 from accounts.forms import HealthWorkerCreationForm
 from appointments.models import Appointment
+from appointments.utils import send_appointment_email
 from chat.models import ChatHistory
 from contact.models import ContactEnquiry
 from documents.models import Document
@@ -383,6 +384,7 @@ def appointment_update_status(request, appointment_id):
             if note:
                 appointment.note = note
             appointment.save()
+            send_appointment_email(appointment, created=False)
             messages.success(request, f"Appointment status updated to {new_status}.")
         else:
             messages.error(request, "Invalid status.")
@@ -693,6 +695,33 @@ def awareness_detail(request, awareness_id):
 
 @login_required
 @user_passes_test(is_admin)
+def awareness_update(request, awareness_id):
+    """Update an existing awareness post or event"""
+    awareness = get_object_or_404(Awareness, id=awareness_id)
+
+    if request.method == "POST":
+        form = AwarenessForm(request.POST, request.FILES, instance=awareness)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, f"Awareness '{awareness.title}' has been updated successfully."
+            )
+            return redirect("custom_admin:awareness_detail", awareness_id=awareness.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = AwarenessForm(instance=awareness)
+
+    context = {
+        "title": "Edit Awareness",
+        "form": form,
+        "awareness": awareness,
+    }
+    return render(request, "custom_admin/awareness/edit.html", context)
+
+
+@login_required
+@user_passes_test(is_admin)
 def awareness_delete(request, awareness_id):
     """Delete an awareness post"""
     awareness = get_object_or_404(Awareness, id=awareness_id)
@@ -785,9 +814,11 @@ def export_data(request):
     """Export data as CSV"""
     data_type = request.GET.get("type")
 
+    today = timezone.now().strftime("%Y-%m-%d")
+
     if data_type == "users":
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="users.csv"'
+        response["Content-Disposition"] = f'attachment; filename="users_{today}.csv"'
 
         writer = csv.writer(response)
         writer.writerow(
@@ -818,7 +849,9 @@ def export_data(request):
 
     elif data_type == "appointments":
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="appointments.csv"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="appointments_{today}.csv"'
+        )
 
         writer = csv.writer(response)
         writer.writerow(
@@ -853,7 +886,9 @@ def export_data(request):
 
     elif data_type == "enquiries":
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="enquiries.csv"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="enquiries_{today}.csv"'
+        )
 
         writer = csv.writer(response)
         writer.writerow(["Name", "Email", "Phone", "Status", "Created", "Message"])
@@ -889,43 +924,43 @@ def admin_profile(request):
     from accounts.forms import UserProfileUpdateForm
     from django.contrib.auth.forms import PasswordChangeForm
     from django.contrib.auth import update_session_auth_hash
-    
+
     user = request.user
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         # Check which form was submitted
-        if 'update_profile' in request.POST:
+        if "update_profile" in request.POST:
             user_form = UserProfileUpdateForm(request.POST, instance=user)
-            
+
             if user_form.is_valid():
                 user_form.save()
-                messages.success(request, 'Profile updated successfully!')
-                return redirect('custom_admin:profile')
-        
-        elif 'change_password' in request.POST:
+                messages.success(request, "Profile updated successfully!")
+                return redirect("custom_admin:profile")
+
+        elif "change_password" in request.POST:
             password_form = PasswordChangeForm(user=user, data=request.POST)
             if password_form.is_valid():
                 password_form.save()
                 update_session_auth_hash(request, password_form.user)
-                messages.success(request, 'Password changed successfully!')
-                return redirect('custom_admin:profile')
+                messages.success(request, "Password changed successfully!")
+                return redirect("custom_admin:profile")
             else:
                 # Re-initialize user form for display
                 user_form = UserProfileUpdateForm(instance=user)
-                
+
                 context = {
-                    'user_form': user_form,
-                    'password_form': password_form,
-                    'user': user,
+                    "user_form": user_form,
+                    "password_form": password_form,
+                    "user": user,
                 }
-                return render(request, 'custom_admin/profile.html', context)
+                return render(request, "custom_admin/profile.html", context)
     else:
         user_form = UserProfileUpdateForm(instance=user)
         password_form = PasswordChangeForm(user=user)
-    
+
     context = {
-        'user_form': user_form,
-        'password_form': password_form,
-        'user': user,
+        "user_form": user_form,
+        "password_form": password_form,
+        "user": user,
     }
-    return render(request, 'custom_admin/profile.html', context)
+    return render(request, "custom_admin/profile.html", context)

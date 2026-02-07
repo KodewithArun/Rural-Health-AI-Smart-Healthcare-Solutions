@@ -5,7 +5,16 @@ from django.conf import settings
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, username, email, password=None, phone_number=None, role="villager"):
+    def create_user(
+        self,
+        first_name,
+        last_name,
+        username,
+        email,
+        password=None,
+        phone_number=None,
+        role="villager",
+    ):
         if not email:
             raise ValueError("User must have an email address")
         if not username:
@@ -17,13 +26,15 @@ class MyAccountManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
-            role=role
+            role=role,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, first_name, last_name, username, email, password, phone_number=None):
+    def create_superuser(
+        self, first_name, last_name, username, email, password, phone_number=None
+    ):
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
@@ -31,7 +42,7 @@ class MyAccountManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
-            role="admin"
+            role="admin",
         )
         user.is_admin = True
         user.is_active = True
@@ -76,6 +87,12 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
+
+    def get_short_name(self):
+        return self.first_name
+
     @property
     def is_villager(self):
         return self.role == "villager"
@@ -90,7 +107,11 @@ class Account(AbstractBaseUser):
 
 
 class HealthWorkerProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="health_profile")
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="health_profile",
+    )
     specialization = models.CharField(max_length=100)
     qualification = models.CharField(max_length=200, blank=True)
     experience_years = models.PositiveIntegerField(default=0)

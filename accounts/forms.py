@@ -359,21 +359,109 @@ class UserProfileUpdateForm(forms.ModelForm):
         fields = ("first_name", "last_name", "username", "email", "phone_number")
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "First Name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "First Name",
+                    "pattern": "^[a-zA-Z ]+$",
+                    "title": "Only alphabets and spaces allowed",
+                }
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Last Name"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Last Name",
+                    "pattern": "^[a-zA-Z ]+$",
+                    "title": "Only alphabets and spaces allowed",
+                }
             ),
             "username": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Username"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Username",
+                    "pattern": "^[a-zA-Z0-9@.+_-]+$",
+                    "title": "Letters, numbers, and @/./+/-/_ only",
+                }
             ),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "Email"}
             ),
             "phone_number": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Phone Number"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "98XXXXXXXX or 97XXXXXXXX",
+                    "pattern": "^(98|97)[0-9]{8}$",
+                    "title": "Phone must start with 98 or 97 and be 10 digits",
+                    "maxlength": "10",
+                }
             ),
         }
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get("first_name")
+        if not first_name or not first_name.strip():
+            raise forms.ValidationError("First name is required.")
+        first_name = first_name.strip()
+        if not first_name.replace(" ", "").isalpha():
+            raise forms.ValidationError("First name must contain only letters.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get("last_name")
+        if not last_name or not last_name.strip():
+            raise forms.ValidationError("Last name is required.")
+        last_name = last_name.strip()
+        if not last_name.replace(" ", "").isalpha():
+            raise forms.ValidationError("Last name must contain only letters.")
+        return last_name
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if not username or not username.strip():
+            raise forms.ValidationError("Username is required.")
+        username = username.strip()
+        if (
+            not username.replace("_", "")
+            .replace("-", "")
+            .replace(".", "")
+            .replace("@", "")
+            .replace("+", "")
+            .isalnum()
+        ):
+            raise forms.ValidationError(
+                "Username can only contain letters, numbers, and @/./+/-/_ characters."
+            )
+        if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if not email:
+            raise forms.ValidationError("Email is required.")
+        if not email.endswith("@gmail.com"):
+            raise forms.ValidationError("Email must be a Gmail address (@gmail.com)")
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("This email is already registered.")
+        return email
+
+    def clean_phone_number(self):
+        phone = self.cleaned_data.get("phone_number")
+        if not phone or not phone.strip():
+            raise forms.ValidationError("Phone number is required.")
+        phone = phone.strip()
+        if not phone.isdigit():
+            raise forms.ValidationError("Phone number must contain only digits.")
+        if len(phone) != 10:
+            raise forms.ValidationError("Phone number must be exactly 10 digits.")
+        if not (phone.startswith("98") or phone.startswith("97")):
+            raise forms.ValidationError("Phone number must start with 98 or 97.")
+        if (
+            User.objects.filter(phone_number=phone)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError("This phone number is already registered.")
+        return phone
 
 
 class HealthWorkerProfileUpdateForm(forms.ModelForm):
@@ -388,10 +476,30 @@ class HealthWorkerProfileUpdateForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Qualification"}
             ),
             "experience_years": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "Years of Experience"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Years of Experience",
+                    "min": "0",
+                    "max": "50",
+                }
             ),
             "availability": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+    def clean_specialization(self):
+        specialization = self.cleaned_data.get("specialization")
+        if not specialization or not specialization.strip():
+            raise forms.ValidationError("Specialization is required.")
+        return specialization.strip()
+
+    def clean_experience_years(self):
+        experience = self.cleaned_data.get("experience_years")
+        if experience is not None:
+            if experience < 0:
+                raise forms.ValidationError("Experience years cannot be negative.")
+            if experience > 50:
+                raise forms.ValidationError("Experience years cannot exceed 50.")
+        return experience
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

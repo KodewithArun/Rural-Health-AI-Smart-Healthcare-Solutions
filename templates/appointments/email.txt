@@ -1,8 +1,55 @@
-Appointment {% if appointment.status == 'pending' %}Created{% else %}Updated{% endif %}
-Date: {{ appointment.date }}
-Time: {{ appointment.time }}
-Reason: {{ appointment.reason }}
-Status: {{ appointment.status }}
-{% if appointment.note %}Notes: {{ appointment.note }}{% endif %}
+=============================================
+  RURAL HEALTH AI - APPOINTMENT NOTIFICATION
+=============================================
+
+{% if created %}NEW APPOINTMENT BOOKED{% elif appointment.status == 'approved' %}APPOINTMENT APPROVED{% elif appointment.status == 'completed' %}APPOINTMENT COMPLETED{% elif appointment.status == 'cancelled' %}APPOINTMENT CANCELLED{% else %}APPOINTMENT UPDATED{% endif %}
+
+{% if recipient_role == 'villager' %}Dear {{ appointment.villager.first_name }} {{ appointment.villager.last_name }},{% elif recipient_role == 'health_worker' %}Dear Dr. {{ appointment.healthworker.first_name }} {{ appointment.healthworker.last_name }},{% else %}Dear User,{% endif %}
+
+{% if created %}Your appointment has been booked successfully. Please find the details below:{% elif appointment.status == 'cancelled' %}The following appointment has been cancelled:{% else %}Your appointment details have been updated:{% endif %}
+
+---------------------------------------------
+  APPOINTMENT DETAILS
+---------------------------------------------
+
+  Date      : {{ appointment.date|date:"l, F d, Y" }}
+  Time      : {{ appointment.time|time:"h:i A" }}
+  Priority  : {{ appointment.get_priority_display }}
+  Status    : {{ appointment.get_status_display }}
+  Reason    : {{ appointment.reason }}
+{% if recipient_role == 'health_worker' %}
+  PATIENT INFORMATION:
+  Name      : {{ appointment.villager.first_name }} {{ appointment.villager.last_name }}
+  Email     : {{ appointment.villager.email }}{% if appointment.villager.phone_number %}
+  Phone     : {{ appointment.villager.phone_number }}{% endif %}
+{% endif %}{% if recipient_role == 'villager' and appointment.healthworker %}
+  HEALTH WORKER:
+  Name      : Dr. {{ appointment.healthworker.first_name }} {{ appointment.healthworker.last_name }}{% if appointment.healthworker.health_profile %}
+  Specialty : {{ appointment.healthworker.health_profile.specialization }}{% endif %}
+{% endif %}{% if appointment.health_document %}
+  HEALTH DOCUMENT:
+  Document  : {{ appointment.health_document.name|cut:"appointment_health_docs/" }} (uploaded){% if recipient_role == 'health_worker' %}
+  Note      : Log in to the portal to view/download the patient's health document.{% endif %}
+{% endif %}{% if appointment.note %}
+  NOTES:
+  {{ appointment.note }}
+{% endif %}
+  Token ID  : {{ appointment.token }}
+
+---------------------------------------------
+{% if created %}
+IMPORTANT REMINDERS:
+  * Please arrive 10 minutes before your scheduled time
+  * Carry any relevant health documents or prescriptions
+  * You can cancel up to 24 hours before the appointment
+  * Save your Token ID for reference at the health post
+{% endif %}{% if appointment.status == 'cancelled' %}
+This appointment has been cancelled. If you need to book a new appointment, please visit the Rural Health AI portal.
+{% endif %}
+---------------------------------------------
+
 Thank you,
-Rural Health Assistant Team
+Rural Health AI Assistant Team
+Empowering rural healthcare through technology
+
+This is an automated notification. Please do not reply to this email.

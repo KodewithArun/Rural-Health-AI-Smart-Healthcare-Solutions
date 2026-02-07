@@ -12,7 +12,7 @@
         <!-- Main Form Card -->
         <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
             <!-- Form Content -->
-            <form method="post" class="p-6" id="appointmentForm">
+            <form method="post" enctype="multipart/form-data" class="p-6" id="appointmentForm">
                 {% csrf_token %}
                 
                 <!-- Non-field Errors -->
@@ -67,7 +67,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Time Field -->
+                    <!-- Time Slot Field -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             {{ form.time.label }}
@@ -84,6 +84,7 @@
                                     font-size: 0.875rem;
                                     transition: border-color 0.15s ease;
                                     background-color: white;
+                                    cursor: pointer;
                                 }
                                 #id_time:focus {
                                     outline: none;
@@ -92,6 +93,9 @@
                                 }
                             </style>
                         </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            <i class="ri-time-line"></i> Health post hours: 9:00 AM – 5:00 PM (30-min slots)
+                        </p>
                         {% if form.time.help_text %}
                             <p class="mt-1 text-xs text-gray-500">{{ form.time.help_text }}</p>
                         {% endif %}
@@ -184,6 +188,53 @@
 
                     <!-- Hidden Priority Field (AI will set this) -->
                     {{ form.priority }}
+
+                    <!-- Health Document Upload (Optional) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Health Document
+                            <span class="text-xs text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors" id="dropZone">
+                            <i class="ri-upload-cloud-2-line text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-sm text-gray-600 mb-2">Upload your background health document</p>
+                            <p class="text-xs text-gray-400 mb-3">PDF, JPG, PNG, DOC, DOCX — Max 10 MB</p>
+                            {{ form.health_document }}
+                            <style>
+                                #id_health_document {
+                                    width: 100%;
+                                    font-size: 0.875rem;
+                                    color: #6b7280;
+                                    cursor: pointer;
+                                }
+                                #id_health_document::file-selector-button {
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 0.375rem;
+                                    border: 1px solid #d1d5db;
+                                    background: white;
+                                    color: #374151;
+                                    font-size: 0.875rem;
+                                    cursor: pointer;
+                                    margin-right: 0.5rem;
+                                    transition: background 0.15s ease;
+                                }
+                                #id_health_document::file-selector-button:hover {
+                                    background: #f3f4f6;
+                                }
+                            </style>
+                        </div>
+                        <p class="mt-1.5 text-xs text-gray-500">
+                            <i class="ri-information-line"></i>
+                            Upload previous prescriptions, lab reports, or health records so the health worker can review them before your visit.
+                        </p>
+                        {% if form.health_document.errors %}
+                            <div class="mt-1">
+                                {% for error in form.health_document.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <!-- Info Box -->
@@ -193,6 +244,7 @@
                         <li>• Appointments must be booked at least 1 hour in advance</li>
                         <li>• Cancellations are allowed up to 24 hours before the scheduled time</li>
                         <li>• A confirmation email will be sent after booking</li>
+                        <li>• You can optionally upload health documents (prescriptions, lab reports) to help the health worker prepare</li>
                     </ul>
                 </div>
 

@@ -75,6 +75,11 @@ urlpatterns = [
         name="awareness_detail",
     ),
     path(
+        "awareness/<int:awareness_id>/edit/",
+        admin_views.awareness_update,
+        name="awareness_update",
+    ),
+    path(
         "awareness/<int:awareness_id>/delete/",
         admin_views.awareness_delete,
         name="awareness_delete",

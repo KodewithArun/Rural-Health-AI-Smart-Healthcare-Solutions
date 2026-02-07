@@ -1,2 +1,34 @@
-.rural
+# Virtual environment
+.rural/
+
+# Environment variables
 .env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Media uploads (user-generated content)
+media/
+
+# Vector database (auto-generated)
+vector_db/
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Database
+*.sqlite3
+!vector_db/

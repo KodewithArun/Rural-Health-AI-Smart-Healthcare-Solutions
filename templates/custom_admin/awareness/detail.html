@@ -98,6 +98,12 @@
       <!-- Actions -->
       <div class="flex items-center space-x-3 pt-6 border-t border-gray-200">
         <a
+          href="{% url 'custom_admin:awareness_update' awareness.id %}"
+          class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium"
+        >
+          <i class="ri-edit-line mr-2"></i>Edit
+        </a>
+        <a
           href="{% url 'custom_admin:awareness_delete' awareness.id %}"
           class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
         >
