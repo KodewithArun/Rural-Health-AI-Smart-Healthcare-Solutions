@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
+from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime, date, timedelta
@@ -24,6 +25,42 @@ def is_health_worker(user):
 
 def is_admin(user):
     return user.role == "admin"
+
+
+@login_required
+@user_passes_test(is_villager)
+def available_slots(request):
+    """Return unavailable time slots for a specific health worker and date.
+
+    Rules:
+    - Only pending/approved appointments block slots.
+    - Cancelled/completed/deleted appointments do not block slots.
+    - For today, past times are treated as available again.
+    """
+    healthworker_id = request.GET.get("healthworker")
+    date_str = request.GET.get("date")
+
+    if not healthworker_id or not date_str:
+        return JsonResponse({"unavailable_slots": []})
+
+    try:
+        selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return JsonResponse({"error": "Invalid date format."}, status=400)
+
+    conflicts = Appointment.objects.filter(
+        healthworker_id=healthworker_id,
+        date=selected_date,
+        status__in=["pending", "approved"],
+    )
+
+    # Once today's appointment time is over, that slot should be reusable.
+    if selected_date == timezone.localdate():
+        now_time = timezone.localtime().time().replace(second=0, microsecond=0)
+        conflicts = conflicts.filter(time__gte=now_time)
+
+    unavailable_slots = [a.time.strftime("%H:%M") for a in conflicts.only("time")]
+    return JsonResponse({"unavailable_slots": unavailable_slots})
 
 
 def can_access_appointment(user, appointment):
@@ -67,9 +104,6 @@ def appointment_list(request):
             token_filter
             | Q(villager__first_name__icontains=search_query)
             | Q(villager__last_name__icontains=search_query)
-            | Q(villager__email__icontains=search_query)
-            | Q(villager__phone_number__icontains=search_query)
-            | Q(reason__icontains=search_query)
         )
 
     if status_filter:

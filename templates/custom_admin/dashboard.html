@@ -340,58 +340,6 @@
   </div>
 </div>
 
-<!-- Chat & User Activity -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  <!-- Chat Activity Chart -->
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-6">
-      Chat Activity (Last 7 Days)
-    </h3>
-    <canvas id="chatChart" height="100"></canvas>
-  </div>
-
-  <!-- Most Active Users -->
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-    <h3 class="text-lg font-bold text-gray-800 mb-6">
-      Most Active Users (Chat)
-    </h3>
-    <div class="space-y-3">
-      {% for user in most_active_users %}
-      <div
-        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
-      >
-        <div class="flex items-center space-x-3">
-          <div
-            class="w-10 h-10 bg-gradient-to-br from-green-600 to-green-600 rounded-full flex items-center justify-center"
-          >
-            <span class="text-white font-semibold text-sm"
-              >{{ user.user__first_name.0|default:'U'}}
-            </span>
-          </div>
-          <div>
-            <p class="text-sm font-semibold text-gray-800">
-              {{ user.user__first_name }} {{ user.user__last_name }}
-            </p>
-            <p class="text-xs text-gray-500">
-              @{{ user.user__username }} • {{ user.user__role|title }}
-            </p>
-          </div>
-        </div>
-        <div class="text-right">
-          <p class="text-lg font-bold text-purple-600">{{ user.chat_count }}</p>
-          <p class="text-xs text-gray-500">chats</p>
-        </div>
-      </div>
-      {% empty %}
-      <div class="text-center py-8 text-gray-500">
-        <i class="ri-chat-off-line text-4xl mb-2"></i>
-        <p>No chat activity yet</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-
 <!-- Top Health Workers & Upcoming Events -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <!-- Top Health Workers -->
@@ -527,42 +475,5 @@
       }
   });
 
-  // Chat Activity Chart
-  const chatData = {{ chat_trend|safe }};
-  const chatLabels = chatData.map(item => item.date);
-  const chatCounts = chatData.map(item => item.count);
-
-  const chatCtx = document.getElementById('chatChart').getContext('2d');
-  new Chart(chatCtx, {
-      type: 'bar',
-      data: {
-          labels: chatLabels,
-          datasets: [{
-              label: 'Chat Sessions',
-              data: chatCounts,
-              backgroundColor: 'rgba(16, 185, 129, 0.8)',
-              borderColor: 'rgb(16, 185, 129)',
-              borderWidth: 2,
-              borderRadius: 8
-          }]
-      },
-      options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-              legend: {
-                  display: false
-              }
-          },
-          scales: {
-              y: {
-                  beginAtZero: true,
-                  ticks: {
-                      precision: 0
-                  }
-              }
-          }
-      }
-  });
 </script>
 {% endblock %}

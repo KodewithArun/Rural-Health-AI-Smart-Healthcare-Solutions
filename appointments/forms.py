@@ -64,6 +64,8 @@ class AppointmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+        self.fields["healthworker"].required = True
+        self.fields["healthworker"].empty_label = "Select a doctor"
         if user:
             self.fields["healthworker"].queryset = self.fields[
                 "healthworker"
@@ -136,7 +138,6 @@ class AppointmentUpdateForm(forms.ModelForm):
         fields = [
             "date",
             "time",
-            "reason",
             "healthworker",
             "priority",
             "status",
@@ -158,10 +159,19 @@ class AppointmentUpdateForm(forms.ModelForm):
                 "healthworker"
             ].queryset.filter(role="health_worker")
 
+            # If user is not an admin, restrict changing date, time, and healthworker
+            if getattr(user, "role", "") != "admin" and not getattr(
+                user, "is_superuser", False
+            ):
+                self.fields.pop("date", None)
+                self.fields.pop("time", None)
+                self.fields.pop("healthworker", None)
+
         # Add helpful labels for priority field
-        self.fields["priority"].help_text = (
-            "AI-classified priority. Can be manually adjusted if needed."
-        )
+        if "priority" in self.fields:
+            self.fields["priority"].help_text = (
+                "AI-classified priority. Can be manually adjusted if needed."
+            )
 
     def clean_date(self):
         appointment_date = self.cleaned_data.get("date")
@@ -180,15 +190,6 @@ class AppointmentUpdateForm(forms.ModelForm):
                     "Please select a time between 9:00 AM and 5:00 PM (health post operating hours)."
                 )
         return appointment_time
-
-    def clean_reason(self):
-        reason = self.cleaned_data.get("reason")
-        if not reason or not reason.strip():
-            raise forms.ValidationError("Reason is required.")
-        reason = reason.strip()
-        if len(reason) < 5:
-            raise forms.ValidationError("Reason must be at least 5 characters long.")
-        return reason
 
     def clean_note(self):
         note = self.cleaned_data.get("note")

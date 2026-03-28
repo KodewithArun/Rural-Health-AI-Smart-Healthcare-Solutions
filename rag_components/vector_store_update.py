@@ -9,14 +9,18 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
+
 # helpers
 def _get_config(key, default=None):
     return getattr(settings, "RAG_CONFIG", {}).get(key, default)
 
+
 ####################
 # Loading & splitting
 ####################
-def load_file_with_metadata(file_path: str, source_name: str = None, doc_id: str = None):
+def load_file_with_metadata(
+    file_path: str, source_name: str = None, doc_id: str = None
+):
     """Load file and attach metadata."""
     filename = os.path.basename(file_path)
     if filename.lower().endswith(".pdf"):
@@ -35,39 +39,44 @@ def load_file_with_metadata(file_path: str, source_name: str = None, doc_id: str
         d.metadata["filename"] = filename
     return docs
 
+
 def split_documents(documents: List):
     chunk_size = _get_config("CHUNK_SIZE", 1000)
     chunk_overlap = _get_config("CHUNK_OVERLAP", 200)
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=len
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap, length_function=len
     )
     return splitter.split_documents(documents)
+
 
 ####################
 # Embeddings & Chroma
 ####################
 def get_embeddings():
-    model_name = _get_config("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+    model_name = _get_config(
+        "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+    )
     return HuggingFaceEmbeddings(model_name=model_name)
+
 
 def get_vector_db_path():
     return _get_config("VECTOR_DB_PATH", os.path.join(settings.BASE_DIR, "vector_db"))
 
+
 # Cache management
 _vector_store_cache = None
+
 
 def get_vector_store():
     """
     Get vector store instance. Uses caching but respects cache clears after deletions.
     """
     global _vector_store_cache
-    
+
     # If cache exists, return it
     if _vector_store_cache is not None:
         return _vector_store_cache
-    
+
     # Otherwise create new instance
     path = get_vector_db_path()
     os.makedirs(path, exist_ok=True)
@@ -75,11 +84,13 @@ def get_vector_store():
     _vector_store_cache = Chroma(persist_directory=path, embedding_function=embeddings)
     return _vector_store_cache
 
+
 def _clear_vector_store_cache():
     """Clear the cached vector store to force fresh connection."""
     global _vector_store_cache
     _vector_store_cache = None
     print("Vector store cache cleared")
+
 
 ####################
 # Incremental ops
@@ -107,6 +118,7 @@ def add_file_to_vector_db(file_path: str, doc_id: str, source_name: str = None):
     # ChromaDB auto-persists in newer versions, no need for .persist()
     return vector_store
 
+
 def delete_document_vectors_by_doc_id(doc_id: str):
     """
     Delete all vectors whose metadata.doc_id == doc_id.
@@ -114,36 +126,35 @@ def delete_document_vectors_by_doc_id(doc_id: str):
     Forces a fresh reload of the collection to avoid caching issues.
     """
     vector_store = get_vector_store()
-    
+
     # Get the underlying Chroma collection
     collection = vector_store._collection
-    
+
     # Query for all document IDs with matching doc_id metadata
     try:
         # ChromaDB uses 'where' parameter for metadata filtering
-        results = collection.get(
-            where={"doc_id": doc_id}
-        )
-        
+        results = collection.get(where={"doc_id": doc_id})
+
         # Extract the IDs to delete
-        ids_to_delete = results.get('ids', [])
-        
+        ids_to_delete = results.get("ids", [])
+
         if ids_to_delete:
             # Delete by IDs
             collection.delete(ids=ids_to_delete)
             print(f"Deleted {len(ids_to_delete)} chunks for doc_id: {doc_id}")
-            
+
             # CRITICAL: Clear any module-level caches by getting a fresh instance
             # This ensures subsequent retrievals don't use stale cached data
             _clear_vector_store_cache()
         else:
             print(f"No chunks found for doc_id: {doc_id}")
-            
+
     except Exception as e:
         print(f"Error deleting vectors for doc_id {doc_id}: {e}")
         raise
-    
+
     return vector_store
+
 
 ####################
 # Full rebuild (management command likely)
@@ -168,9 +179,12 @@ def rebuild_vector_db_from_media():
 
     chunks = split_documents(all_docs)
     if chunks:
-        return Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=path)
+        return Chroma.from_documents(
+            documents=chunks, embedding=embeddings, persist_directory=path
+        )
     else:
         return Chroma(persist_directory=path, embedding_function=embeddings)
+
 
 ####################
 # Retriever convenience

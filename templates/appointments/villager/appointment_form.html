@@ -67,47 +67,6 @@
                         {% endif %}
                     </div>
 
-                    <!-- Time Slot Field -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ form.time.label }}
-                            <span class="text-red-600">*</span>
-                        </label>
-                        <div>
-                            {{ form.time }}
-                            <style>
-                                #id_time {
-                                    width: 100%;
-                                    padding: 0.625rem 0.75rem;
-                                    border: 1px solid #d1d5db;
-                                    border-radius: 0.375rem;
-                                    font-size: 0.875rem;
-                                    transition: border-color 0.15s ease;
-                                    background-color: white;
-                                    cursor: pointer;
-                                }
-                                #id_time:focus {
-                                    outline: none;
-                                    border-color: #2563eb;
-                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-                                }
-                            </style>
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500">
-                            <i class="ri-time-line"></i> Health post hours: 9:00 AM – 5:00 PM (30-min slots)
-                        </p>
-                        {% if form.time.help_text %}
-                            <p class="mt-1 text-xs text-gray-500">{{ form.time.help_text }}</p>
-                        {% endif %}
-                        {% if form.time.errors %}
-                            <div class="mt-1">
-                                {% for error in form.time.errors %}
-                                    <p class="text-red-600 text-xs">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
                     <!-- Health Worker Field -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -140,6 +99,48 @@
                         {% if form.healthworker.errors %}
                             <div class="mt-1">
                                 {% for error in form.healthworker.errors %}
+                                    <p class="text-red-600 text-xs">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Time Slot Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.time.label }}
+                            <span class="text-red-600">*</span>
+                        </label>
+                        <div>
+                            {{ form.time }}
+                            <style>
+                                #id_time {
+                                    width: 100%;
+                                    padding: 0.625rem 0.75rem;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 0.375rem;
+                                    font-size: 0.875rem;
+                                    transition: border-color 0.15s ease;
+                                    background-color: white;
+                                    cursor: pointer;
+                                }
+                                #id_time:focus {
+                                    outline: none;
+                                    border-color: #2563eb;
+                                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                                }
+                            </style>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            <i class="ri-time-line"></i> Health post hours: 9:00 AM – 5:00 PM (30-min slots)
+                        </p>
+                        <p id="slotStatus" class="mt-1 text-xs text-blue-600"></p>
+                        {% if form.time.help_text %}
+                            <p class="mt-1 text-xs text-gray-500">{{ form.time.help_text }}</p>
+                        {% endif %}
+                        {% if form.time.errors %}
+                            <div class="mt-1">
+                                {% for error in form.time.errors %}
                                     <p class="text-red-600 text-xs">{{ error }}</p>
                                 {% endfor %}
                             </div>
@@ -275,6 +276,84 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('appointmentForm');
+        const dateField = document.getElementById('id_date');
+        const healthworkerField = document.getElementById('id_healthworker');
+        const timeField = document.getElementById('id_time');
+        const slotStatus = document.getElementById('slotStatus');
+        const slotsUrl = "{% url 'appointments:available_slots' %}";
+
+        // Preserve base option labels so we can safely toggle disabled text.
+        Array.from(timeField.options).forEach(function(option) {
+            option.dataset.baseLabel = option.textContent;
+        });
+
+        function resetTimeOptions() {
+            Array.from(timeField.options).forEach(function(option) {
+                option.disabled = false;
+                option.textContent = option.dataset.baseLabel || option.textContent;
+            });
+        }
+
+        function applyUnavailableSlots(unavailableSlots) {
+            const unavailable = new Set(unavailableSlots || []);
+            Array.from(timeField.options).forEach(function(option) {
+                const value = option.value;
+                if (!value) {
+                    option.disabled = false;
+                    option.textContent = option.dataset.baseLabel || option.textContent;
+                    return;
+                }
+
+                if (unavailable.has(value)) {
+                    option.disabled = true;
+                    option.textContent = (option.dataset.baseLabel || option.textContent) + ' (Unavailable)';
+                    if (timeField.value === value) {
+                        timeField.value = '';
+                    }
+                } else {
+                    option.disabled = false;
+                    option.textContent = option.dataset.baseLabel || option.textContent;
+                }
+            });
+        }
+
+        async function refreshAvailableSlots() {
+            const selectedDate = dateField.value;
+            const selectedHealthworker = healthworkerField.value;
+
+            resetTimeOptions();
+            timeField.disabled = true;
+
+            if (!selectedDate || !selectedHealthworker) {
+                timeField.value = '';
+                slotStatus.textContent = 'Select date and doctor to see available time slots.';
+                return;
+            }
+
+            slotStatus.textContent = 'Checking available slots...';
+
+            const query = new URLSearchParams({
+                date: selectedDate,
+                healthworker: selectedHealthworker,
+            });
+
+            try {
+                const response = await fetch(slotsUrl + '?' + query.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load slot availability.');
+                }
+
+                const data = await response.json();
+                applyUnavailableSlots(data.unavailable_slots || []);
+                slotStatus.textContent = 'Available slots updated.';
+                timeField.disabled = false;
+            } catch (error) {
+                slotStatus.textContent = 'Could not check slot availability. Please try again.';
+            }
+        }
         
         const firstError = document.querySelector('.text-red-600');
         if (firstError) {
@@ -282,10 +361,19 @@
         }
 
         form.addEventListener('submit', function(e) {
+            if (timeField.disabled) {
+                e.preventDefault();
+                slotStatus.textContent = 'Please select date and doctor first, then choose an available time slot.';
+                return;
+            }
             const submitBtn = form.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
         });
+
+        dateField.addEventListener('change', refreshAvailableSlots);
+        healthworkerField.addEventListener('change', refreshAvailableSlots);
+        refreshAvailableSlots();
     });
 </script>
 {% endblock %}

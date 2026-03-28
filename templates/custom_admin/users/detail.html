@@ -270,55 +270,6 @@
       </div>
     </div>
 
-    <!-- Permissions -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-        <i class="ri-shield-check-line text-purple-600 mr-2"></i>
-        Permissions & Access
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div
-          class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-        >
-          <span class="text-sm text-gray-700">Account Active</span>
-          {% if user_obj.is_active %}
-          <i class="ri-checkbox-circle-fill text-green-600 text-xl"></i>
-          {% else %}
-          <i class="ri-close-circle-fill text-red-600 text-xl"></i>
-          {% endif %}
-        </div>
-        <div
-          class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-        >
-          <span class="text-sm text-gray-700">Staff Access</span>
-          {% if user_obj.is_staff %}
-          <i class="ri-checkbox-circle-fill text-green-600 text-xl"></i>
-          {% else %}
-          <i class="ri-close-circle-fill text-red-600 text-xl"></i>
-          {% endif %}
-        </div>
-        <div
-          class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-        >
-          <span class="text-sm text-gray-700">Admin Access</span>
-          {% if user_obj.is_admin %}
-          <i class="ri-checkbox-circle-fill text-green-600 text-xl"></i>
-          {% else %}
-          <i class="ri-close-circle-fill text-red-600 text-xl"></i>
-          {% endif %}
-        </div>
-        <div
-          class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-        >
-          <span class="text-sm text-gray-700">Superadmin</span>
-          {% if user_obj.is_superadmin %}
-          <i class="ri-checkbox-circle-fill text-green-600 text-xl"></i>
-          {% else %}
-          <i class="ri-close-circle-fill text-red-600 text-xl"></i>
-          {% endif %}
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 

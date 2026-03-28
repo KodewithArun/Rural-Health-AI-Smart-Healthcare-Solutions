@@ -16,7 +16,7 @@
     >#{{ appointment.id }}</a
   >
   <span class="mx-2">/</span>
-  <span class="text-gray-800">Assign Health Worker</span>
+  <span class="text-gray-800">{% if appointment.healthworker %}Re-assign{% else %}Assign{% endif %} Health Worker</span>
 </nav>
 {% endblock %} {% block content %}
 
@@ -24,7 +24,7 @@
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
     <!-- Header -->
     <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Assign Health Worker</h2>
+      <h2 class="text-2xl font-bold text-gray-800">{% if appointment.healthworker %}Re-assign{% else %}Assign{% endif %} Health Worker</h2>
       <p class="text-sm text-gray-600 mt-1">
         Select a health worker to assign to this appointment
       </p>
@@ -83,6 +83,7 @@
               name="health_worker"
               value="{{ worker.id }}"
               required
+              {% if appointment.healthworker and appointment.healthworker.id == worker.id %}checked{% endif %}
               class="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
             />
             <div class="flex-1 flex items-center space-x-3">

@@ -67,13 +67,6 @@ def admin_dashboard(request):
     total_chats = ChatHistory.objects.count()
     chats_today = ChatHistory.objects.filter(timestamp__date=today).count()
     chats_this_week = ChatHistory.objects.filter(timestamp__gte=last_7_days).count()
-    most_active_users = (
-        ChatHistory.objects.values(
-            "user__username", "user__first_name", "user__last_name", "user__role"
-        )
-        .annotate(chat_count=Count("id"))
-        .order_by("-chat_count")[:5]
-    )
 
     # ========== OTHER STATISTICS ==========
     total_documents = Document.objects.count()
@@ -108,7 +101,6 @@ def admin_dashboard(request):
 
     # ========== TREND DATA FOR CHARTS ==========
     appointment_trend = []
-    chat_trend = []
     user_trend = []
 
     for i in range(6, -1, -1):
@@ -117,12 +109,6 @@ def admin_dashboard(request):
             {
                 "date": date.strftime("%b %d"),
                 "count": Appointment.objects.filter(created_at__date=date).count(),
-            }
-        )
-        chat_trend.append(
-            {
-                "date": date.strftime("%b %d"),
-                "count": ChatHistory.objects.filter(timestamp__date=date).count(),
             }
         )
         user_trend.append(
@@ -150,7 +136,6 @@ def admin_dashboard(request):
         "total_chats": total_chats,
         "chats_today": chats_today,
         "chats_this_week": chats_this_week,
-        "most_active_users": most_active_users,
         "total_documents": total_documents,
         "documents_this_month": documents_this_month,
         "total_enquiries": total_enquiries,
@@ -162,7 +147,6 @@ def admin_dashboard(request):
         "upcoming_events": upcoming_events,
         "top_health_workers": top_health_workers,
         "appointment_trend": json.dumps(appointment_trend),
-        "chat_trend": json.dumps(chat_trend),
         "user_trend": json.dumps(user_trend),
         "current_date": now,
     }
@@ -406,6 +390,10 @@ def appointment_assign(request, appointment_id):
 
         appointment.healthworker = health_worker
         appointment.save()
+
+        # Send notification to the newly assigned health worker and the villager
+        send_appointment_email(appointment)
+
         messages.success(
             request, f"Appointment assigned to {health_worker.get_full_name()}."
         )
@@ -884,28 +872,6 @@ def export_data(request):
                 ]
             )
 
-    elif data_type == "enquiries":
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = (
-            f'attachment; filename="enquiries_{today}.csv"'
-        )
-
-        writer = csv.writer(response)
-        writer.writerow(["Name", "Email", "Phone", "Status", "Created", "Message"])
-
-        enquiries = ContactEnquiry.objects.all()
-        for enq in enquiries:
-            writer.writerow(
-                [
-                    f"{enq.first_name} {enq.last_name}",
-                    enq.email,
-                    enq.phone,
-                    enq.status,
-                    enq.created_at,
-                    enq.message,
-                ]
-            )
-
     else:
         return HttpResponse("Invalid export type", status=400)
 
@@ -927,6 +893,10 @@ def admin_profile(request):
 
     user = request.user
 
+    # Initialize both forms so they are always available in template context.
+    user_form = UserProfileUpdateForm(instance=user)
+    password_form = PasswordChangeForm(user=user)
+
     if request.method == "POST":
         # Check which form was submitted
         if "update_profile" in request.POST:
@@ -944,19 +914,6 @@ def admin_profile(request):
                 update_session_auth_hash(request, password_form.user)
                 messages.success(request, "Password changed successfully!")
                 return redirect("custom_admin:profile")
-            else:
-                # Re-initialize user form for display
-                user_form = UserProfileUpdateForm(instance=user)
-
-                context = {
-                    "user_form": user_form,
-                    "password_form": password_form,
-                    "user": user,
-                }
-                return render(request, "custom_admin/profile.html", context)
-    else:
-        user_form = UserProfileUpdateForm(instance=user)
-        password_form = PasswordChangeForm(user=user)
 
     context = {
         "user_form": user_form,

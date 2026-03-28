@@ -171,9 +171,12 @@ RAG_CONFIG = {
     "CHUNK_SIZE": 1000,
     "CHUNK_OVERLAP": 200,
     "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
-    "LLM_MODEL": "gemini-2.5-flash",  # example, change as needed
+    "LLM_MODEL": "gemini-2.5-flash-lite",  # example, change as needed
     "TEMPERATURE": 0,
     "MAX_TOKENS": 2048,
+    "MAX_RETRIES": 1,
+    "REQUEST_TIMEOUT": 30,
+    "CLASSIFIER_MODE": "hybrid",  # llm | heuristic | hybrid
     "RETRIEVER_K": 3,
 }
 

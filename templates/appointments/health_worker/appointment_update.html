@@ -98,7 +98,23 @@
                 {% csrf_token %}
                 
                 <div class="space-y-6">
+                    <!-- Health Worker Field -->
+                    {% if form.healthworker %}
+                    <div>
+                        <label for="id_healthworker" class="block text-sm font-medium text-gray-700 mb-2">
+                            Assigned Health Worker
+                        </label>
+                        {{ form.healthworker }}
+                        {% if form.healthworker.errors %}
+                            {% for error in form.healthworker.errors %}
+                                <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
                     <!-- Priority Field -->
+                    {% if form.priority %}
                     <div>
                         <label for="id_priority" class="block text-sm font-medium text-gray-700 mb-2">
                             Priority <span class="text-red-600">*</span>
@@ -113,8 +129,10 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% endif %}
 
                     <!-- Status Field -->
+                    {% if form.status %}
                     <div>
                         <label for="id_status" class="block text-sm font-medium text-gray-700 mb-2">
                             Status <span class="text-red-600">*</span>
@@ -126,8 +144,10 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% endif %}
 
                     <!-- Date Field -->
+                    {% if form.date %}
                     <div>
                         <label for="id_date" class="block text-sm font-medium text-gray-700 mb-2">
                             Date <span class="text-red-600">*</span>
@@ -139,8 +159,10 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% endif %}
 
                     <!-- Time Slot Field -->
+                    {% if form.time %}
                     <div>
                         <label for="id_time" class="block text-sm font-medium text-gray-700 mb-2">
                             Time Slot <span class="text-red-600">*</span>
@@ -153,8 +175,10 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% endif %}
 
                     <!-- Notes Field -->
+                    {% if form.note %}
                     <div>
                         <label for="id_note" class="block text-sm font-medium text-gray-700 mb-2">
                             Notes
@@ -169,10 +193,11 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    {% endif %}
                 </div>
 
                 <style>
-                    #id_priority, #id_status, #id_date, #id_time {
+                    #id_healthworker, #id_priority, #id_status, #id_date, #id_time {
                         width: 100%;
                         padding: 0.625rem 0.75rem;
                         border: 1px solid #d1d5db;
@@ -181,7 +206,7 @@
                         transition: border-color 0.15s ease;
                         background-color: white;
                     }
-                    #id_priority:focus, #id_status:focus, #id_date:focus, #id_time:focus {
+                    #id_healthworker:focus, #id_priority:focus, #id_status:focus, #id_date:focus, #id_time:focus {
                         outline: none;
                         border-color: #2563eb;
                         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);

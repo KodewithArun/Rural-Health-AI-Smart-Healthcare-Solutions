@@ -97,12 +97,11 @@
                     <i class="ri-user-heart-line text-purple-600 mr-2"></i>
                     Assigned Health Worker
                 </h3>
-                {% if not appointment.healthworker %}
                 <a href="{% url 'custom_admin:appointment_assign' appointment.id %}" 
                    class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition font-medium">
-                    <i class="ri-user-add-line mr-1"></i>Assign Worker
+                    <i class="ri-user-{% if appointment.healthworker %}settings{% else %}add{% endif %}-line mr-1"></i>
+                    {% if appointment.healthworker %}Re-assign Worker{% else %}Assign Worker{% endif %}
                 </a>
-                {% endif %}
             </div>
             
             {% if appointment.healthworker %}
@@ -225,13 +224,11 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
             <div class="space-y-2">
-                {% if not appointment.healthworker %}
                 <a href="{% url 'custom_admin:appointment_assign' appointment.id %}" 
                    class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition font-medium">
-                    <i class="ri-user-add-line"></i>
-                    <span>Assign Health Worker</span>
+                    <i class="ri-user-{% if appointment.healthworker %}settings{% else %}add{% endif %}-line"></i>
+                    <span>{% if appointment.healthworker %}Re-assign Worker{% else %}Assign Health Worker{% endif %}</span>
                 </a>
-                {% endif %}
                 <a href="{% url 'custom_admin:appointment_delete' appointment.id %}" 
                    class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">
                     <i class="ri-delete-bin-line"></i>
