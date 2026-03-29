@@ -8,6 +8,7 @@ from langchain_core.documents import Document
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import SerpAPIWrapper
+from tavily import TavilyClient
 from langgraph.graph import StateGraph, END
 from .llm_and_rag import (
     get_llm,
@@ -418,6 +419,38 @@ def generate_rag_answer(state: GraphState) -> GraphState:
     return {**state, "generation": generation, "sources": sources}
 
 
+def _get_search_provider() -> str:
+    """Return the configured search provider ('tavily' or 'serpapi')."""
+    provider = getattr(settings, "SEARCH_PROVIDER", "tavily").lower()
+    if provider in {"tavily", "serpapi"}:
+        return provider
+    return "tavily"
+
+
+def _tavily_search(query: str) -> List[Document]:
+    """Run a web search using the Tavily API and return Documents."""
+    api_key = getattr(settings, "TAVILY_API_KEY", "") or os.environ.get("TAVILY_API_KEY", "")
+    client = TavilyClient(api_key=api_key)
+    response = client.search(query=query, max_results=5, search_depth="basic", topic="general")
+    documents = []
+    for result in response.get("results", []):
+        content = result.get("content", "")
+        title = result.get("title", "")
+        url = result.get("url", "")
+        page_content = f"{title}\n{content}" if title else content
+        documents.append(
+            Document(page_content=page_content, metadata={"source": url, "title": title})
+        )
+    return documents if documents else [Document(page_content="No search results found.")]
+
+
+def _serpapi_search(query: str) -> List[Document]:
+    """Run a web search using SerpAPI and return Documents."""
+    search = SerpAPIWrapper()
+    search_results = search.run(query)
+    return [Document(page_content=search_results)]
+
+
 def web_search(state: GraphState) -> GraphState:
     """Node to perform a web search as a fallback."""
     logger.debug("NODE: WEB SEARCH")
@@ -433,14 +466,16 @@ def web_search(state: GraphState) -> GraphState:
         if history_lines:
             reformulated_query = f"{question} {history_lines[-1]}"
 
-    search = SerpAPIWrapper()
+    provider = _get_search_provider()
     try:
-        search_results = search.run(reformulated_query)
-        documents = [Document(page_content=search_results)]
-        logger.info("Performed web search for query.")
+        if provider == "tavily":
+            documents = _tavily_search(reformulated_query)
+        else:
+            documents = _serpapi_search(reformulated_query)
+        logger.info("Performed web search via %s for query.", provider)
         return {**state, "documents": documents}
     except Exception as e:
-        logger.warning("Web search failed: %s", e)
+        logger.warning("Web search failed (%s): %s", provider, e)
         return {**state, "documents": [Document(page_content="Search failed.")]}
 
 

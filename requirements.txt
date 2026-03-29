@@ -24,3 +24,4 @@ python-dotenv
 langgraph
 google-search-results
 langchain-google-community
+tavily-python>=0.3.0
