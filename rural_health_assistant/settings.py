@@ -185,6 +185,8 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 GOOGLE_GENAI_API_KEY = os.environ.get("GOOGLE_GENAI_API_KEY", "")
 SERPAPI_API_KEY = os.environ.get("SERPAPI_API_KEY", "")
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
+SEARCH_PROVIDER = os.environ.get("SEARCH_PROVIDER", "tavily")  # 'tavily' | 'serpapi'
 
 
 # Email Configuration
