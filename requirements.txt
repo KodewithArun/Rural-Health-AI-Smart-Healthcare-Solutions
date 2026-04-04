@@ -9,7 +9,6 @@ python-dotenv>=1.0.0
 celery>=5.3.0
 redis>=5.0.0
 Pillow>=10.0.0
-
 # Django
 psycopg2-binary
 gunicorn
@@ -24,3 +23,4 @@ python-dotenv
 langgraph
 google-search-results
 langchain-google-community
+whitenoise

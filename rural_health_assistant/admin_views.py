@@ -18,6 +18,7 @@ from documents.models import Document
 from documents.forms import DocumentUploadForm
 from awareness.models import Awareness
 from awareness.forms import AwarenessForm
+from awareness.utils import trigger_awareness_email
 import json
 import csv
 
@@ -652,6 +653,7 @@ def awareness_create(request):
         form = AwarenessForm(request.POST, request.FILES)
         if form.is_valid():
             awareness = form.save()
+            trigger_awareness_email(awareness, request)
             messages.success(
                 request, f"Awareness '{awareness.title}' has been created successfully."
             )

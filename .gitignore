@@ -1,5 +1,5 @@
 # Virtual environment
-.rural/
+.venv
 
 # Environment variables
 .env
@@ -32,3 +32,6 @@ build/
 # Database
 *.sqlite3
 !vector_db/
+
+# docs
+Final_Submission_Project_Logbook.html
