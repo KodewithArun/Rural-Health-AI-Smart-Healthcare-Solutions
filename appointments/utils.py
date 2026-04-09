@@ -131,7 +131,7 @@ def classify_appointment_priority(reason: str) -> str:
             return "normal"  # Default fallback
 
         llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash", temperature=0.1, api_key=api_key
+            model=getattr(settings, "GEMINI_MODEL", "gemini-2.5-flash"), temperature=0.1, api_key=api_key
         )
 
         # Classification prompt

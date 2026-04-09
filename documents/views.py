@@ -57,15 +57,7 @@ def upload_document(request):
         if form.is_valid():
             document = form.save(commit=False)
             document.uploaded_by = request.user
-            document.save()
-            
-            # Update vector database
-            # try:
-            #     update_vector_db()
-            #     messages.success(request, 'Document uploaded successfully and vector database updated.')
-            # except Exception as e:
-            #     messages.error(request, f'Document uploaded but vector database update failed: {str(e)}')
-            
+            document.save()            
             return redirect('documents:document_list')
     else:
         form = DocumentUploadForm()
@@ -81,14 +73,6 @@ def update_document(request, pk):
         form = DocumentUpdateForm(request.POST, instance=document)
         if form.is_valid():
             form.save()
-            
-            # Update vector database
-            # try:
-            #     update_vector_db()
-            #     messages.success(request, 'Document updated successfully and vector database updated.')
-            # except Exception as e:
-            #     messages.error(request, f'Document updated but vector database update failed: {str(e)}')
-            
             return redirect('documents:document_list')
     else:
         form = DocumentUpdateForm(instance=document)
@@ -106,14 +90,6 @@ def delete_document(request, pk):
         document.file.delete()
     
     document.delete()
-    
-    # Update vector database
-    # try:
-    #     update_vector_db()
-    #     messages.success(request, 'Document deleted successfully and vector database updated.')
-    # except Exception as e:
-    #     messages.error(request, f'Document deleted but vector database update failed: {str(e)}')
-    
     return redirect('documents:document_list')
 
 @login_required

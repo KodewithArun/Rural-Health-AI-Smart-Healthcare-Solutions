@@ -121,7 +121,6 @@ class HealthWorkerProfile(models.Model):
         return f"{self.user.first_name} {self.user.last_name} - {self.specialization}"
 
 
-# 👇 ADD THESE LINES AT THE VERY BOTTOM 👇
 class HealthWorker(Account):
     class Meta:
         proxy = True

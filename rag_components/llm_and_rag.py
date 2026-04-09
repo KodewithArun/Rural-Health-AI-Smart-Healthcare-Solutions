@@ -1,10 +1,6 @@
 # rag_components/llm_and_rag.py
 from django.conf import settings
 from langchain_core.prompts import PromptTemplate
-
-# from langchain.chains import create_retrieval_chain
-# from langchain.chains.combine_documents import create_stuff_documents_chain
-# from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 from .vector_store_update import get_retriever, get_vector_store
 
