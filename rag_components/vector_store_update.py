@@ -52,11 +52,20 @@ def split_documents(documents: List):
 ####################
 # Embeddings & Chroma
 ####################
+
+# Cache for embeddings
+_embeddings_cache = None
+
+
 def get_embeddings():
-    model_name = _get_config(
-        "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
-    )
-    return HuggingFaceEmbeddings(model_name=model_name)
+    """Get embeddings, using a cache to avoid reloading."""
+    global _embeddings_cache
+    if _embeddings_cache is None:
+        model_name = _get_config(
+            "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+        )
+        _embeddings_cache = HuggingFaceEmbeddings(model_name=model_name)
+    return _embeddings_cache
 
 
 def get_vector_db_path():

@@ -18,8 +18,7 @@ WORKDIR /app
 
 # Install Python dependencies using uv for faster builds
 COPY requirements.txt /app/
-RUN pip install --upgrade pip && \
-    pip install uv && \
+RUN pip install uv && \
     uv pip install --system -r requirements.txt
 
 # Copy the project code into the container
