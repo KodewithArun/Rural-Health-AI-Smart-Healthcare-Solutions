@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 import os
 from pathlib import Path
@@ -28,8 +32,8 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = ['*']  # Allow all hosts for development, change in production
 
 # Application definition
 
@@ -104,14 +108,17 @@ AUTH_USER_MODEL = "accounts.Account"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "rural_health_assistant_db"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres_password_123"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": os.environ.get("DB_NAME", "rural_health_assistant_db"),
+    #     "USER": os.environ.get("DB_USER", "postgres"),
+    #     "PASSWORD": os.environ.get("DB_PASSWORD", "postgres_password_123"),
+    #     "HOST": os.environ.get("DB_HOST", "localhost"),
+    #     "PORT": os.environ.get("DB_PORT", "5432"),
+    # }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
@@ -205,3 +212,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+# hosting settings
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
